@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  * 	* Redistributions of source code must retain the above copyright notice,
@@ -9,7 +9,7 @@
  * 	* Redistributions in binary form must reproduce the above copyright notice,
  * 	  this list of conditions and the following disclaimer in the documentation
  * 	  and/or other materials provided with the distribution.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -26,41 +26,33 @@
  */
 package com.github.drxaos.robocoder.ui;
 
-import com.github.drxaos.robocoder.ui.j2d.TestbedSidePanel;
-
-import java.awt.BorderLayout;
-import java.awt.Component;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * The testbed frame. Contains all stuff. Make sure you call {@link #setVisible(boolean)} and
  * {@link #setDefaultCloseOperation(int)}.
- * 
+ *
  * @author Daniel Murphy
  */
 @SuppressWarnings("serial")
 public class TestbedFrame extends JFrame {
 
-  private TestbedSidePanel side;
-  private TestbedModel model;
-  private TestbedController controller;
+    private TestbedModel model;
+    private TestbedController controller;
 
-  public TestbedFrame(final TestbedModel argModel, final TestbedPanel argPanel, TestbedController.UpdateBehavior behavior) {
-    super("JBox2D Testbed");
-    setLayout(new BorderLayout());
+    public TestbedFrame(final TestbedModel argModel, final TestbedPanel argPanel, TestbedController.UpdateBehavior behavior) {
+        super("JBox2D Testbed");
+        setLayout(new BorderLayout());
 
-    model = argModel;
-    model.setDebugDraw(argPanel.getDebugDraw());
-    controller = new TestbedController(model, argPanel, behavior);
-    side = new TestbedSidePanel(model, controller);
-    
-    add((Component) argPanel, "Center");
-    add(new JScrollPane(side), "East");
-    pack();
+        model = argModel;
+        model.setDebugDraw(argPanel.getDebugDraw());
+        controller = new TestbedController(model, argPanel, behavior);
 
-    controller.playTest(0);
-    controller.start();
-  }
+        add((Component) argPanel, "Center");
+        pack();
+
+        controller.playTest(0);
+        controller.start();
+    }
 }

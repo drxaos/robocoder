@@ -15,7 +15,7 @@ public class WayTestProgram extends AbstractProgram {
     public void run() {
 
         if (chassis == null || radar == null) {
-            debug.debug("fail");
+            robot.say("fail");
             return;
         }
 
@@ -35,8 +35,8 @@ public class WayTestProgram extends AbstractProgram {
             while (!wheel.moveSmooth(wayPoint, 4000)) {
                 wheel.stop();
                 KPoint failPoint = radar.getPosition();
-                debug.debugPoint(wayPoint);
-                debug.debug("Please drag me to that point!");
+                robot.point(wayPoint);
+                robot.say("Please drag me to that point!");
                 while (true) {
                     KPoint newPoint = radar.getPosition();
                     if (wheel.distance(newPoint, failPoint) > 0.2) {
@@ -44,11 +44,12 @@ public class WayTestProgram extends AbstractProgram {
                     }
                 }
             }
-            debug.debug(null);
+            robot.say(null);
 
             if (wheel.distance(radar.getPosition(), new KPoint(0, 0)) < 0.3) {
                 wheel.stop();
             }
         }
+        wheel.stop();
     }
 }

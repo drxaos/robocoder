@@ -217,7 +217,7 @@ public abstract class TestbedTest
     }
 
     /**
-     * Gets the debug draw for the testbed
+     * Gets the robot draw for the testbed
      *
      * @return
      */
@@ -501,13 +501,16 @@ public abstract class TestbedTest
     private final Vec2 p2 = new Vec2();
     private final Vec2 tangent = new Vec2();
     private final List<String> statsList = new ArrayList<String>();
+    private TestbedDrawer drawer;
 
     public synchronized void step() {
         float hz = 60;
         float timeStep = hz > 0f ? 1f / hz : 0;
 
         final DebugDraw debugDraw = model.getDebugDraw();
-
+        if (drawer == null) {
+            drawer = new TestbedDrawer(debugDraw);
+        }
 
         int flags = 0;
         flags += DebugDraw.e_shapeBit;
@@ -522,7 +525,7 @@ public abstract class TestbedTest
 
         m_world.step(timeStep, 10, 10);
 
-        m_world.drawDebugData();
+        drawer.drawWorld(m_world.getBodyList());
 
         if (timeStep > 0f) {
             ++stepCount;

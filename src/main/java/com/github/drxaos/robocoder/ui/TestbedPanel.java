@@ -64,7 +64,7 @@ public interface TestbedPanel {
   public void grabFocus();
 
   /**
-   * Gets the display-specific debug draw
+   * Gets the display-specific robot draw
    * @return
    */
   public DebugDraw getDebugDraw();

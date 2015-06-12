@@ -7,14 +7,14 @@ public abstract class AbstractProgram implements Runnable {
     protected Bus bus;
     protected Chassis chassis;
     protected Radar radar;
-    protected Debug debug;
+    protected Robot robot;
     protected Wheel wheel;
 
     public void setBus(Bus bus) {
         this.bus = bus;
         chassis = new Chassis(bus);
         radar = new Radar(bus);
-        debug = new Debug(bus);
+        robot = new Robot(bus);
         wheel = new Wheel(bus);
     }
 

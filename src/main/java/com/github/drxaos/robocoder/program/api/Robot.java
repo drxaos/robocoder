@@ -3,17 +3,17 @@ package com.github.drxaos.robocoder.program.api;
 import com.github.drxaos.robocoder.program.Bus;
 import straightedge.geom.KPoint;
 
-public class Debug {
+public class Robot {
     Bus bus;
 
-    public Debug(Bus bus) {
+    public Robot(Bus bus) {
         this.bus = bus;
     }
 
-    public void debug(String message) {
+    public void say(String message) {
     }
 
-    public void debugPoint(KPoint point) {
+    public void point(KPoint point) {
     }
 
 }
