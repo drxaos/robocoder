@@ -5,6 +5,9 @@ import robo2d.game.impl.*;
 import robo2d.testbed.RobotTest;
 import straightedge.geom.KPoint;
 
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+
 public class ConcurrentTest extends RobotTest {
 
     @Override
@@ -26,6 +29,14 @@ public class ConcurrentTest extends RobotTest {
         }
 
         game.addGps();
+
+        ArrayList<Point2D> points = new ArrayList<Point2D>();
+        points.clear();
+        points.add(new Point2D.Double(30,60));
+        points.add(new Point2D.Double(38,70));
+        points.add(new Point2D.Double(45,55));
+        points.add(new Point2D.Double(30,20));
+        game.addWall(new WallImpl(points, 0));
 
         return game;
     }
