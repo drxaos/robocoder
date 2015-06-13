@@ -16,6 +16,8 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
+import java.util.Map;
+
 public class TestbedDrawer {
 
     private DebugDraw m_debugDraw;
@@ -43,20 +45,21 @@ public class TestbedDrawer {
         Vec2 rightBottom = m_debugDraw.getScreenToWorld(panel.getScreenWidth(), panel.getScreenHeight());
         float factor = 5;
         float scale = m_debugDraw.getScreenToWorld(new Vec2(1, 1)).sub(m_debugDraw.getScreenToWorld(new Vec2(0, 0))).x;
-        while (scale > 0.1) {
+        while (scale > 0.101) {
             factor *= 2;
             scale /= 2;
         }
-        while (scale < 0.05) {
+        while (scale < 0.049) {
             factor /= 2;
             scale *= 2;
         }
         float x0 = factor * (int) (leftTop.x / factor);
         float y0 = factor * (int) (leftTop.y / factor);
-        for (float x =  x0; x < rightBottom.x; x += factor) {
-            for (float y =  y0; y > rightBottom.y; y -= factor) {
+        color.set(0.3f, 0.3f, 0.3f);
+        for (float x = x0; x < rightBottom.x; x += factor) {
+            for (float y = y0; y > rightBottom.y; y -= factor) {
                 center.set(x, y);
-                m_debugDraw.drawPoint(center, 1, Color3f.WHITE);
+                m_debugDraw.drawPoint(center, 1, color);
             }
         }
 
@@ -66,24 +69,57 @@ public class TestbedDrawer {
             for (Body b = m_bodyList; b != null; b = b.getNext()) {
                 xf.set(b.getTransform());
                 for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
-                    if (b.isActive() == false) {
-                        color.set(0.5f, 0.5f, 0.3f);
+                    Color3f userColor = getUserColor(b);
+                    if (!b.isActive()) {
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.5f, 0.3f);
+                        }
                         drawShape(f, xf, color);
                     } else if (b.getType() == BodyType.STATIC) {
-                        color.set(0.5f, 0.9f, 0.3f);
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.9f, 0.3f);
+                        }
                         drawShape(f, xf, color);
                     } else if (b.getType() == BodyType.KINEMATIC) {
-                        color.set(0.5f, 0.5f, 0.9f);
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.5f, 0.9f);
+                        }
                         drawShape(f, xf, color);
-                    } else if (b.isAwake() == false) {
-                        color.set(0.5f, 0.5f, 0.5f);
+                    } else if (!b.isAwake()) {
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.5f, 0.5f);
+                        }
                         drawShape(f, xf, color);
                     } else {
-                        color.set(0.9f, 0.7f, 0.7f);
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.9f, 0.7f, 0.7f);
+                        }
                         drawShape(f, xf, color);
                     }
                 }
             }
+        }
+    }
+
+    private Color3f getUserColor(Body b) {
+        Object userData = b.getUserData();
+        Object userColor;
+        if (userData != null && userData instanceof Map &&
+                (userColor = ((Map) userData).get("color")) != null &&
+                userColor instanceof Color3f) {
+            return (Color3f) userColor;
+        } else {
+            return null;
         }
     }
 

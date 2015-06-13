@@ -24,10 +24,10 @@ public class Wheel {
     }
 
     public boolean rotate(double toAngle, boolean precise, int maxMs) {
-        long end = radar.getTime() + maxMs;
         if (chassis == null || radar == null) {
             return false;
         }
+        long end = radar.getTime() + maxMs;
         stop();
         while (radar.getTime() < end) {
             double azimuth = differenceAngle(radar.getAngle(), toAngle);
