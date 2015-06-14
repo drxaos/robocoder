@@ -63,6 +63,6 @@ public class ChassisEquipment implements Equipment {
     public void applyPhysics(Robot robot, Game game) {
         LEFT_ENGINE.set(0, (float) leftAccel);
         RIGHT_ENGINE.set(0, (float) rightAccel);
-        robot.getBox().applyForces(effectsMap);
+        robot.getModel().applyForces(effectsMap);
     }
 }

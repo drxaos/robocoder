@@ -11,9 +11,9 @@ import straightedge.geom.KPolygon;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StaticBox extends Box {
+public class StaticModel extends AbstractModel {
 
-    public StaticBox(KPolygon kPolygon, KPoint position, double angle) {
+    public StaticModel(KPolygon kPolygon, KPoint position, double angle) {
         List<KPolygon> triangulated = PolygonUtil.triangulate(kPolygon);
         for (KPolygon polygon : triangulated) {
             PolygonShape shape = new PolygonShape();

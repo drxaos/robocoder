@@ -10,10 +10,7 @@ import straightedge.geom.KPoint;
 import java.util.ArrayList;
 
 
-public class WayTestProgram extends AbstractProgram {
-    public static void main(String[] args) {
-        Runner.run(WayTest.class, WayTestProgram.class);
-    }
+public class WaypointsProgram extends AbstractProgram {
 
     public void run() {
         while (true) {

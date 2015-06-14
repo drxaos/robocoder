@@ -2,19 +2,41 @@ package com.github.drxaos.robocoder.game.box2d;
 
 import com.github.drxaos.robocoder.game.Actor;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.Fixture;
-import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.*;
 import straightedge.geom.KPoint;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class Box {
+public abstract class AbstractModel {
     public BodyDef bodyDef;
     public List<FixtureDef> fixtureDefs = new ArrayList<FixtureDef>();
     public Body body;
+    public World world;
+    public Actor actor;
+
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    public void setActor(Actor actor) {
+        this.actor = actor;
+    }
+
+    public void makeBody(World world, Actor actor) {
+        this.world = world;
+        this.actor = actor;
+        Body body = this.world.createBody(this.actor.getModel().bodyDef);
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("actor", this.actor);
+        body.setUserData(data);
+        for (FixtureDef fixtureDef : this.actor.getModel().fixtureDefs) {
+            body.createFixture(fixtureDef);
+        }
+        this.actor.getModel().body = body;
+    }
 
     public double getAngle() {
         if (body == null) {

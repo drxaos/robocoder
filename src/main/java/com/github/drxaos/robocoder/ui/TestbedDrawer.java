@@ -1,5 +1,6 @@
 package com.github.drxaos.robocoder.ui;
 
+import com.github.drxaos.robocoder.game.Actor;
 import com.github.drxaos.robocoder.ui.j2d.DebugDrawJ2D;
 import com.github.drxaos.robocoder.ui.j2d.TestPanelJ2D;
 import org.jbox2d.callbacks.DebugDraw;
@@ -14,6 +15,10 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.Fixture;
+import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.Joint;
+import org.jbox2d.dynamics.joints.PulleyJoint;
+import org.jbox2d.pooling.IWorldPool;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
 import java.util.Map;
@@ -21,6 +26,7 @@ import java.util.Map;
 public class TestbedDrawer {
 
     private DebugDraw m_debugDraw;
+    private World world;
 
     private final Transform xf = new Transform();
     private final Color3f color = new Color3f();
@@ -29,15 +35,20 @@ public class TestbedDrawer {
     private final Vec2 v1 = new Vec2();
     private final Vec2 v2 = new Vec2();
     private final Vec2Array tlvertices = new Vec2Array();
+    private final IWorldPool pool;
 
-    public TestbedDrawer(DebugDraw m_debugDraw) {
+    public TestbedDrawer(DebugDraw m_debugDraw, World world) {
         this.m_debugDraw = m_debugDraw;
+        this.world = world;
+        pool = world.getPool();
     }
 
-    public void drawWorld(Body m_bodyList) {
+    public void drawWorld() {
         if (m_debugDraw == null) {
             return;
         }
+        Body m_bodyList = world.getBodyList();
+        Joint m_jointList = world.getJointList();
 
         Vec2 leftTop = m_debugDraw.getScreenToWorld(0, 0);
         leftTop.set((int) leftTop.x, (int) leftTop.y);
@@ -63,61 +74,60 @@ public class TestbedDrawer {
             }
         }
 
-        int flags = m_debugDraw.getFlags();
-
-        if ((flags & DebugDraw.e_shapeBit) == DebugDraw.e_shapeBit) {
-            for (Body b = m_bodyList; b != null; b = b.getNext()) {
-                xf.set(b.getTransform());
-                for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
-                    Color3f userColor = getUserColor(b);
-                    if (!b.isActive()) {
-                        if (userColor != null) {
-                            color.set(userColor);
-                        } else {
-                            color.set(0.5f, 0.5f, 0.3f);
-                        }
-                        drawShape(f, xf, color);
-                    } else if (b.getType() == BodyType.STATIC) {
-                        if (userColor != null) {
-                            color.set(userColor);
-                        } else {
-                            color.set(0.5f, 0.9f, 0.3f);
-                        }
-                        drawShape(f, xf, color);
-                    } else if (b.getType() == BodyType.KINEMATIC) {
-                        if (userColor != null) {
-                            color.set(userColor);
-                        } else {
-                            color.set(0.5f, 0.5f, 0.9f);
-                        }
-                        drawShape(f, xf, color);
-                    } else if (!b.isAwake()) {
-                        if (userColor != null) {
-                            color.set(userColor);
-                        } else {
-                            color.set(0.5f, 0.5f, 0.5f);
-                        }
-                        drawShape(f, xf, color);
+        for (Body b = m_bodyList; b != null; b = b.getNext()) {
+            xf.set(b.getTransform());
+            for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
+                Color3f userColor = getUserColor(b);
+                if (!b.isActive()) {
+                    if (userColor != null) {
+                        color.set(userColor);
                     } else {
-                        if (userColor != null) {
-                            color.set(userColor);
-                        } else {
-                            color.set(0.9f, 0.7f, 0.7f);
-                        }
-                        drawShape(f, xf, color);
+                        color.set(0.5f, 0.5f, 0.3f);
                     }
+                    drawShape(f, xf, color);
+                } else if (b.getType() == BodyType.STATIC) {
+                    if (userColor != null) {
+                        color.set(userColor);
+                    } else {
+                        color.set(0.5f, 0.9f, 0.3f);
+                    }
+                    drawShape(f, xf, color);
+                } else if (b.getType() == BodyType.KINEMATIC) {
+                    if (userColor != null) {
+                        color.set(userColor);
+                    } else {
+                        color.set(0.5f, 0.5f, 0.9f);
+                    }
+                    drawShape(f, xf, color);
+                } else if (!b.isAwake()) {
+                    if (userColor != null) {
+                        color.set(userColor);
+                    } else {
+                        color.set(0.5f, 0.5f, 0.5f);
+                    }
+                    drawShape(f, xf, color);
+                } else {
+                    if (userColor != null) {
+                        color.set(userColor);
+                    } else {
+                        color.set(0.9f, 0.7f, 0.7f);
+                    }
+                    drawShape(f, xf, color);
                 }
             }
+        }
+        for (Joint j = m_jointList; j != null; j = j.getNext()) {
+            drawJoint(j);
         }
     }
 
     private Color3f getUserColor(Body b) {
         Object userData = b.getUserData();
-        Object userColor;
+        Object actor;
         if (userData != null && userData instanceof Map &&
-                (userColor = ((Map) userData).get("color")) != null &&
-                userColor instanceof Color3f) {
-            return (Color3f) userColor;
+                (actor = ((Map) userData).get("actor")) != null &&
+                actor instanceof Actor) {
+            return ((Actor) actor).getColor();
         } else {
             return null;
         }
@@ -177,4 +187,46 @@ public class TestbedDrawer {
                 break;
         }
     }
+
+    private void drawJoint(Joint joint) {
+        Body bodyA = joint.getBodyA();
+        Body bodyB = joint.getBodyB();
+        Transform xf1 = bodyA.getTransform();
+        Transform xf2 = bodyB.getTransform();
+        Vec2 x1 = xf1.p;
+        Vec2 x2 = xf2.p;
+        Vec2 p1 = pool.popVec2();
+        Vec2 p2 = pool.popVec2();
+        joint.getAnchorA(p1);
+        joint.getAnchorB(p2);
+
+        color.set(0.5f, 0.8f, 0.8f);
+
+        switch (joint.getType()) {
+            // TODO djm write after writing joints
+            case DISTANCE:
+                m_debugDraw.drawSegment(p1, p2, color);
+                break;
+
+            case PULLEY: {
+                PulleyJoint pulley = (PulleyJoint) joint;
+                Vec2 s1 = pulley.getGroundAnchorA();
+                Vec2 s2 = pulley.getGroundAnchorB();
+                m_debugDraw.drawSegment(s1, p1, color);
+                m_debugDraw.drawSegment(s2, p2, color);
+                m_debugDraw.drawSegment(s1, s2, color);
+            }
+            break;
+            case CONSTANT_VOLUME:
+            case MOUSE:
+                // don't draw this
+                break;
+            default:
+                m_debugDraw.drawSegment(x1, p1, color);
+                m_debugDraw.drawSegment(p1, p2, color);
+                m_debugDraw.drawSegment(x2, p2, color);
+        }
+        pool.pushVec2(2);
+    }
+
 }

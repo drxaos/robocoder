@@ -7,11 +7,11 @@ import straightedge.geom.KPoint;
 public class RadarEquipment implements Equipment {
 
     public Double getAngle(Robot robot, Game game) {
-        return robot.getBox().getAngle();
+        return robot.getModel().getAngle();
     }
 
     public KPoint getPosition(Robot robot, Game game) {
-        return robot.getBox().getPosition();
+        return robot.getModel().getPosition();
     }
 
     @Override

@@ -15,39 +15,29 @@ import java.util.Map;
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
 
-    protected World worldBox;
+    protected World world;
     protected DebugDraw debugDraw;
     public static final Color3f GRAY = new Color3f(0.3f, 0.3f, 0.3f);
     protected Long time = 0l;
     protected boolean started = false;
 
-    public Game(World worldBox, DebugDraw debugDraw) {
-        this.worldBox = worldBox;
+    public Game(World world, DebugDraw debugDraw) {
+        this.world = world;
         this.debugDraw = debugDraw;
     }
 
     public void addActor(Actor actor) {
         actors.add(actor);
+        actor.setGame(this);
         if (started) {
-            makeBody(actor);
+            actor.getModel().makeBody(world,actor);
             actor.start();
         }
     }
 
-    public void makeBody(Actor actor) {
-        Body body = worldBox.createBody(actor.getBox().bodyDef);
-        Map<String, Object> data = new HashMap<String, Object>();
-        data.put("actor", actor);
-        body.setUserData(data);
-        for (FixtureDef fixtureDef : actor.getBox().fixtureDefs) {
-            body.createFixture(fixtureDef);
-        }
-        actor.getBox().body = body;
-    }
-
     public void start() {
         for (Actor actor : actors) {
-            makeBody(actor);
+            actor.getModel().makeBody(world,actor);
         }
         for (Actor actor : actors) {
             actor.start();
@@ -71,7 +61,7 @@ public class Game {
     public List<Actor> resolvePoint(double x, double y) {
         List<Actor> result = new ArrayList<Actor>();
         for (Actor actor : actors) {
-            if (actor.getBox().hasPoint(new Vec2((float) x, (float) y))) {
+            if (actor.getModel().hasPoint(new Vec2((float) x, (float) y))) {
                 result.add(actor);
             }
         }

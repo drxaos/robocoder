@@ -1,13 +1,27 @@
 package com.github.drxaos.robocoder.game;
 
-import com.github.drxaos.robocoder.game.box2d.Box;
+import com.github.drxaos.robocoder.game.box2d.AbstractModel;
+import org.jbox2d.common.Color3f;
 
-public interface Actor {
-    Box getBox();
+public abstract class Actor {
+    protected Game game;
 
-    void start();
+    public abstract AbstractModel getModel();
 
-    void beforeStep();
+    public void start() {
+    }
 
-    void afterStep();
+    public void beforeStep() {
+    }
+
+    public void afterStep() {
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public Color3f getColor() {
+        return null;
+    }
 }

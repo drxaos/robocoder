@@ -1,20 +1,22 @@
 package com.github.drxaos.robocoder.game.box2d;
 
-import com.github.drxaos.robocoder.game.actors.Robot;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.joints.RopeJoint;
+import org.jbox2d.dynamics.joints.RopeJointDef;
 import straightedge.geom.KPoint;
 
 import java.util.Map;
 
-public class RobotBox extends Box {
+public class RobotModel extends AbstractModel {
 
     public static double SIZE = 1;
+    RopeJoint joint;
 
-    public RobotBox(KPoint position, double angle) {
+    public RobotModel(KPoint position, double angle) {
         {
             PolygonShape shape = new PolygonShape();
             shape.setAsBox((float) SIZE, (float) SIZE);
@@ -74,5 +76,34 @@ public class RobotBox extends Box {
 
             body.applyForce(worldVector, worldPoint);
         }
+    }
+
+    public void tieBox(BoxModel box) {
+        if (body == null) {
+            return;
+        }
+        RopeJointDef jointDef = new RopeJointDef();
+        jointDef.bodyA = body;
+        jointDef.bodyB = box.body;
+        jointDef.localAnchorA.set(0.0f, (float) -SIZE);
+        jointDef.localAnchorB.set(0.0f, (float) BoxModel.SIZE);
+        jointDef.maxLength = 3;
+        jointDef.collideConnected = true;
+        joint = (RopeJoint) world.createJoint(jointDef);
+    }
+
+    public void untie() {
+        if (body == null || joint == null) {
+            return;
+        }
+        world.destroyJoint(joint);
+        joint = null;
+    }
+
+    public void setRopeLength(float maxLength) {
+        if (joint == null) {
+            return;
+        }
+        joint.setMaxLength(maxLength);
     }
 }

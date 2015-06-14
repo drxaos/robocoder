@@ -509,7 +509,7 @@ public abstract class TestbedTest
 
         final DebugDraw debugDraw = model.getDebugDraw();
         if (drawer == null) {
-            drawer = new TestbedDrawer(debugDraw);
+            drawer = new TestbedDrawer(debugDraw, m_world);
         }
 
         int flags = 0;
@@ -525,7 +525,7 @@ public abstract class TestbedTest
 
         m_world.step(timeStep, 10, 10);
 
-        drawer.drawWorld(m_world.getBodyList());
+        drawer.drawWorld();
 
         if (timeStep > 0f) {
             ++stepCount;

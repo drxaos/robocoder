@@ -2,7 +2,7 @@ package com.github.drxaos.robocoder.game.actors;
 
 import com.github.drxaos.robocoder.game.Actor;
 import com.github.drxaos.robocoder.game.Game;
-import com.github.drxaos.robocoder.game.box2d.RobotBox;
+import com.github.drxaos.robocoder.game.box2d.RobotModel;
 import com.github.drxaos.robocoder.game.equipment.Equipment;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.Bus;
@@ -11,11 +11,10 @@ import straightedge.geom.KPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Robot implements Actor {
+public class Robot extends Actor {
 
     List<Equipment> equipment = new ArrayList<Equipment>();
-    Game game;
-    RobotBox box;
+    RobotModel model;
     String uid;
     boolean logging = false;
 
@@ -23,10 +22,9 @@ public class Robot implements Actor {
     private Thread userProgramThread;
     private Bus bus = new Bus();
 
-    public Robot(Game game, String uid, double x, double y, double angle) {
-        this.game = game;
+    public Robot(String uid, double x, double y, double angle) {
         this.uid = uid;
-        box = new RobotBox(new KPoint(x, y), angle);
+        model = new RobotModel(new KPoint(x, y), angle);
     }
 
     public void enableLogging() {
@@ -50,8 +48,8 @@ public class Robot implements Actor {
     }
 
     @Override
-    public RobotBox getBox() {
-        return box;
+    public RobotModel getModel() {
+        return model;
     }
 
     @Override
