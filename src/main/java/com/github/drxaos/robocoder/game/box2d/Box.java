@@ -1,5 +1,6 @@
 package com.github.drxaos.robocoder.game.box2d;
 
+import com.github.drxaos.robocoder.game.Actor;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;

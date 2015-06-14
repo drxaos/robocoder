@@ -8,7 +8,9 @@ import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.World;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
@@ -16,7 +18,8 @@ public class Game {
     protected World worldBox;
     protected DebugDraw debugDraw;
     public static final Color3f GRAY = new Color3f(0.3f, 0.3f, 0.3f);
-    private Long time = 0l;
+    protected Long time = 0l;
+    protected boolean started = false;
 
     public Game(World worldBox, DebugDraw debugDraw) {
         this.worldBox = worldBox;
@@ -25,19 +28,31 @@ public class Game {
 
     public void addActor(Actor actor) {
         actors.add(actor);
+        if (started) {
+            makeBody(actor);
+            actor.start();
+        }
+    }
+
+    public void makeBody(Actor actor) {
+        Body body = worldBox.createBody(actor.getBox().bodyDef);
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("actor", actor);
+        body.setUserData(data);
+        for (FixtureDef fixtureDef : actor.getBox().fixtureDefs) {
+            body.createFixture(fixtureDef);
+        }
+        actor.getBox().body = body;
     }
 
     public void start() {
         for (Actor actor : actors) {
-            Body body = worldBox.createBody(actor.getBox().bodyDef);
-            for (FixtureDef fixtureDef : actor.getBox().fixtureDefs) {
-                body.createFixture(fixtureDef);
-            }
-            actor.getBox().body = body;
+            makeBody(actor);
         }
         for (Actor actor : actors) {
             actor.start();
         }
+        started = true;
     }
 
     public void beforeStep() {

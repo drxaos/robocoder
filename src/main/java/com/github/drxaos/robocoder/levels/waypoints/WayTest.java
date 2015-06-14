@@ -39,11 +39,23 @@ public class WayTest extends AbstractLevel {
         Robot robot = new Robot(game, "RC-1", 0, -10, Math.PI * 4 * Math.random());
         robot.addEquipment(new ChassisEquipment(100d));
         robot.addEquipment(new RadarEquipment());
+        robot.setProgram(userProgram);
         game.addActor(robot);
-        setPlayer(robot);
 
         return game;
     }
 
+    int n = 2;
 
+    @Override
+    public synchronized void step() {
+        super.step();
+        if (game.getTime() % 750 == 0 && game.getTime() < 2000) {
+            Robot robot = new Robot(game, "RC-" + n++, 0, -10, Math.PI * 4 * Math.random());
+            robot.addEquipment(new ChassisEquipment(100d));
+            robot.addEquipment(new RadarEquipment());
+            robot.setProgram(userProgram);
+            game.addActor(robot);
+        }
+    }
 }

@@ -1,6 +1,5 @@
 package com.github.drxaos.robocoder.game;
 
-import com.github.drxaos.robocoder.game.actors.Robot;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.ui.*;
 import com.github.drxaos.robocoder.ui.j2d.TestPanelJ2D;
@@ -9,21 +8,14 @@ import org.jbox2d.common.Vec2;
 import javax.swing.*;
 
 public abstract class AbstractLevel extends TestbedTest {
-    Game game;
-    AbstractProgram userProgram;
-    protected Robot player;
-
-    public void setPlayer(Robot robot) {
-        player = robot;
-        player.enableLogging();
-    }
+    protected Game game;
+    protected Class<? extends AbstractProgram> userProgram;
 
     @Override
     public void initLevel(boolean deserialized) {
         setTitle(getLevelName());
         getWorld().setGravity(new Vec2());
         game = createGame();
-        player.setProgram(this.userProgram);
         game.start();
     }
 
@@ -53,7 +45,7 @@ public abstract class AbstractLevel extends TestbedTest {
 
     }
 
-    public void setUserProgram(final AbstractProgram userProgram) {
+    public void setUserProgram(final Class<? extends AbstractProgram> userProgram) {
         this.userProgram = userProgram;
     }
 

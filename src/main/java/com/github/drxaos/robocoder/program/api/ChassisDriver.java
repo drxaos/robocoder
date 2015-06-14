@@ -2,11 +2,11 @@ package com.github.drxaos.robocoder.program.api;
 
 import com.github.drxaos.robocoder.program.Bus;
 
-public class Chassis {
+public class ChassisDriver {
 
     Bus bus;
 
-    public Chassis(Bus bus) {
+    public ChassisDriver(Bus bus) {
         this.bus = bus;
     }
 

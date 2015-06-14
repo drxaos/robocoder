@@ -19,12 +19,13 @@ public class Robot implements Actor {
     String uid;
     boolean logging = false;
 
-    private AbstractProgram userProgram;
+    private AbstractProgram program;
     private Thread userProgramThread;
     private Bus bus = new Bus();
 
     public Robot(Game game, String uid, double x, double y, double angle) {
         this.game = game;
+        this.uid = uid;
         box = new RobotBox(new KPoint(x, y), angle);
     }
 
@@ -34,7 +35,7 @@ public class Robot implements Actor {
 
     private void log(String msg) {
         if (logging) {
-            System.out.println(msg);
+            System.out.println(uid + ": " + msg);
         }
     }
 
@@ -55,16 +56,11 @@ public class Robot implements Actor {
 
     @Override
     public void start() {
-        userProgramThread.start();
-    }
-
-    public void setProgram(final AbstractProgram userProgram) {
-        this.userProgram = userProgram;
-        userProgram.setBus(bus);
+        program.setBus(bus);
         this.userProgramThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                userProgram.run();
+                program.run();
                 log("Program terminated");
             }
         }, "UserProgram: " + uid);
@@ -76,13 +72,24 @@ public class Robot implements Actor {
                 try {
                     log("Trying to recover...");
                     Thread.sleep(3000);
-                    setProgram(userProgram);
+                    setProgram(program.getClass());
                     userProgramThread.start();
                 } catch (InterruptedException e1) {
                     log(e1);
                 }
             }
         });
+        userProgramThread.start();
+    }
+
+    public void setProgram(final Class<? extends AbstractProgram> program) {
+        try {
+            this.program = program.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

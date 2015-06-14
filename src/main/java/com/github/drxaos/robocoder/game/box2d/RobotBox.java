@@ -1,5 +1,6 @@
 package com.github.drxaos.robocoder.game.box2d;
 
+import com.github.drxaos.robocoder.game.actors.Robot;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
@@ -14,7 +15,6 @@ public class RobotBox extends Box {
     public static double SIZE = 1;
 
     public RobotBox(KPoint position, double angle) {
-
         {
             PolygonShape shape = new PolygonShape();
             shape.setAsBox((float) SIZE, (float) SIZE);

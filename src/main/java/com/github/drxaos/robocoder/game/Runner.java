@@ -6,8 +6,7 @@ public class Runner {
     public static void run(Class<? extends AbstractLevel> level, Class<? extends AbstractProgram> program) {
         try {
             AbstractLevel lvl = level.newInstance();
-            AbstractProgram prg = program.newInstance();
-            lvl.setUserProgram(prg);
+            lvl.setUserProgram(program);
             lvl.start();
         } catch (InstantiationException e) {
             e.printStackTrace();

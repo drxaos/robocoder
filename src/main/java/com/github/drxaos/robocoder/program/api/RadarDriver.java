@@ -3,10 +3,10 @@ package com.github.drxaos.robocoder.program.api;
 import com.github.drxaos.robocoder.program.Bus;
 import straightedge.geom.KPoint;
 
-public class Radar {
+public class RadarDriver {
     Bus bus;
 
-    public Radar(Bus bus) {
+    public RadarDriver(Bus bus) {
         this.bus = bus;
     }
 
