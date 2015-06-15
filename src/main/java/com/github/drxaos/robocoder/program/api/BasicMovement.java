@@ -89,13 +89,16 @@ public class BasicMovement {
             float width = 2;
             KPoint current = radarDriver.getPosition();
             double myAngle = radarDriver.getAngle();
+            System.out.println(current.toString() + ", a:" + myAngle / Math.PI * 180);
             double angleToTarget = angle(current, to);
             double azimuth = differenceAngle(myAngle, angleToTarget);
-            double direction = (Math.abs(azimuth) > Math.PI / 2) ? -1 : 1;
             double distance = distance(to, current);
             if (distance < 1 && Math.abs(azimuth) > accuracy && Math.abs(azimuth) < Math.PI - accuracy) {
-                chassisDriver.setLeftAcceleration(-direction * rotateForce * azimuth);
-                chassisDriver.setRightAcceleration(direction * rotateForce * azimuth);
+                chassisDriver.setLeftAcceleration(-rotateForce * azimuth);
+                chassisDriver.setRightAcceleration(rotateForce * azimuth);
+            } else if (distance > 1 && Math.abs(azimuth) >= Math.PI / 2) {
+                chassisDriver.setLeftAcceleration(-rotateForce * azimuth);
+                chassisDriver.setRightAcceleration(rotateForce * azimuth);
             } else if (distance < accuracy) {
                 stop();
                 return true;
@@ -103,8 +106,8 @@ public class BasicMovement {
                 double distanceLeft = distance(to, new KPoint(current.getX() + (float) Math.cos(myAngle + Math.PI / 2) * width, current.getY() + (float) Math.sin(myAngle + Math.PI / 2) * width));
                 double distanceRight = distance(to, new KPoint(current.getX() + (float) Math.cos(myAngle - Math.PI / 2) * width, current.getY() + (float) Math.sin(myAngle - Math.PI / 2) * width));
                 double distDiff = distanceLeft - distanceRight;
-                double left = direction * (Math.min(1 * force * distance, 100) - rotateForce * distDiff);
-                double right = direction * (Math.min(1 * force * distance, 100) + rotateForce * distDiff);
+                double left = (Math.min(1 * force * distance, 100) + rotateForce * distDiff);
+                double right = (Math.min(1 * force * distance, 100) - rotateForce * distDiff);
                 chassisDriver.setLeftAcceleration(left);
                 chassisDriver.setRightAcceleration(right);
             }
@@ -121,8 +124,8 @@ public class BasicMovement {
     }
 
     public double angle(KPoint from, KPoint to) {
-        double dx = from.getX() - to.getX();
-        double dy = from.getY() - to.getY();
+        double dx = to.getX() - from.getX();
+        double dy = to.getY() - from.getY();
         return Math.atan2(dy, dx);
     }
 

@@ -1,6 +1,7 @@
 package com.github.drxaos.robocoder.game.box2d;
 
 import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
@@ -37,5 +38,12 @@ public class BoxModel extends AbstractModel {
             return 0d;
         }
         return (double) body.getAngle() - Math.PI / 2;
+    }
+
+    Vec2 tiePoint = new Vec2(0, (float) SIZE);
+
+    @Override
+    public Vec2 getTiePoint() {
+        return tiePoint;
     }
 }

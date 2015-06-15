@@ -9,8 +9,6 @@ import org.jbox2d.dynamics.joints.RopeJoint;
 import org.jbox2d.dynamics.joints.RopeJointDef;
 import straightedge.geom.KPoint;
 
-import java.util.Map;
-
 public class RobotModel extends AbstractModel {
 
     public static double SIZE = 1;
@@ -48,7 +46,7 @@ public class RobotModel extends AbstractModel {
         bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
         bodyDef.position.set((float) position.getX(), (float) position.getY());
-        bodyDef.angle = (float) angle;
+        bodyDef.angle = (float) (angle - Math.PI / 2);
         bodyDef.allowSleep = false;
         bodyDef.linearDamping = 10f;
         bodyDef.angularDamping = 30f;
@@ -58,36 +56,20 @@ public class RobotModel extends AbstractModel {
         if (body == null) {
             return 0d;
         }
-        return (double) body.getAngle() - Math.PI / 2;
+        return (double) body.getAngle() + Math.PI / 2;
     }
 
-    public void applyForces(Map<KPoint, Vec2> forces) {
-        if (body == null) {
-            return;
-        }
-        float a = body.getAngle();
-        for (Map.Entry<KPoint, Vec2> e : forces.entrySet()) {
 
-            Vec2 worldVector = body.getWorldVector(e.getValue());
-            Vec2 point = new Vec2((float) e.getKey().getX(), (float) e.getKey().getY());
-            point.normalize();
-            point.mul((float) SIZE);
-            Vec2 worldPoint = body.getWorldPoint(point);
-
-            body.applyForce(worldVector, worldPoint);
-        }
-    }
-
-    public void tieBox(BoxModel box) {
-        if (body == null) {
+    public void tie(AbstractModel towable, boolean back) {
+        if (body == null || joint != null) {
             return;
         }
         RopeJointDef jointDef = new RopeJointDef();
         jointDef.bodyA = body;
-        jointDef.bodyB = box.body;
-        jointDef.localAnchorA.set(0.0f, (float) -SIZE);
-        jointDef.localAnchorB.set(0.0f, (float) BoxModel.SIZE);
-        jointDef.maxLength = 3;
+        jointDef.bodyB = towable.body;
+        jointDef.localAnchorA.set(0.0f, (float) SIZE * (back ? -1 : 1));
+        jointDef.localAnchorB.set(towable.getTiePoint());
+        jointDef.maxLength = .01f;
         jointDef.collideConnected = true;
         joint = (RopeJoint) world.createJoint(jointDef);
     }
@@ -98,12 +80,5 @@ public class RobotModel extends AbstractModel {
         }
         world.destroyJoint(joint);
         joint = null;
-    }
-
-    public void setRopeLength(float maxLength) {
-        if (joint == null) {
-            return;
-        }
-        joint.setMaxLength(maxLength);
     }
 }

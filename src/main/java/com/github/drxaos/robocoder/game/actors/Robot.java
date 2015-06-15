@@ -6,6 +6,7 @@ import com.github.drxaos.robocoder.game.box2d.RobotModel;
 import com.github.drxaos.robocoder.game.equipment.Equipment;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.Bus;
+import org.jbox2d.common.Vec2;
 import straightedge.geom.KPoint;
 
 import java.util.ArrayList;
@@ -18,13 +19,18 @@ public class Robot extends Actor {
     String uid;
     boolean logging = false;
 
-    private AbstractProgram program;
-    private Thread userProgramThread;
-    private Bus bus = new Bus();
+    protected AbstractProgram program;
+    protected Thread userProgramThread;
+    protected Bus bus = new Bus();
+    protected boolean active = true;
 
     public Robot(String uid, double x, double y, double angle) {
         this.uid = uid;
         model = new RobotModel(new KPoint(x, y), angle);
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public void enableLogging() {
@@ -56,7 +62,6 @@ public class Robot extends Actor {
     public void start() {
         program.setBus(bus);
         this.userProgramThread = new Thread(new Runnable() {
-            @Override
             public void run() {
                 program.run();
                 log("Program terminated");
@@ -64,7 +69,6 @@ public class Robot extends Actor {
         }, "UserProgram: " + uid);
         userProgramThread.setDaemon(true);
         userProgramThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            @Override
             public void uncaughtException(Thread t, Throwable e) {
                 log(e);
                 try {
@@ -107,5 +111,39 @@ public class Robot extends Actor {
 
     public Bus getBus() {
         return bus;
+    }
+
+    public boolean tie(boolean back) {
+        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this);
+        if (scanResult == null) {
+            return false;
+        }
+        Actor actor = scanResult.actor;
+        if (!actor.isTowable()) {
+            return false;
+        }
+        model.tie(actor.getModel(), back);
+        return true;
+    }
+
+    public void untie() {
+        model.untie();
+    }
+
+    public void push(boolean back, float strength) {
+        model.untie();
+        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this);
+        if (scanResult == null) {
+            return;
+        }
+        Actor actor = scanResult.actor;
+        double angle = model.getAngle();
+        Vec2 force = new Vec2((float) (Math.cos(angle) * strength), (float) (Math.sin(angle) * strength));
+        actor.getModel().applyWorldForce(scanResult.point, force);
+    }
+
+    @Override
+    public boolean isTowable() {
+        return !active;
     }
 }

@@ -17,6 +17,10 @@ public abstract class Actor {
     public void afterStep() {
     }
 
+    public boolean isTowable() {
+        return false;
+    }
+
     public void setGame(Game game) {
         this.game = game;
     }

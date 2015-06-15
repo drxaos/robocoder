@@ -14,7 +14,6 @@ public class RadarEquipment implements Equipment {
         return robot.getModel().getPosition();
     }
 
-    @Override
     public void communicate(Robot robot, Game game) {
         String req = robot.getBus().peekRequest();
         if ("radar::angle".equals(req)) {
@@ -24,11 +23,10 @@ public class RadarEquipment implements Equipment {
             robot.getBus().writeResponse("" + position.getX() + ":" + position.getY());
         } else if ("radar::time".equals(req)) {
             Long time = game.getTime();
-            robot.getBus().writeResponse(""+time);
+            robot.getBus().writeResponse("" + time);
         }
     }
 
-    @Override
     public void applyPhysics(Robot robot, Game game) {
 
     }

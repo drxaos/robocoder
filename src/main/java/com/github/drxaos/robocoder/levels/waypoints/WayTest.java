@@ -40,6 +40,7 @@ public class WayTest extends AbstractLevel {
         robot.addEquipment(new ChassisEquipment(100d));
         robot.addEquipment(new RadarEquipment());
         robot.setProgram(userProgram);
+        robot.enableLogging();
         game.addActor(robot);
 
         return game;
@@ -55,6 +56,7 @@ public class WayTest extends AbstractLevel {
             robot.addEquipment(new ChassisEquipment(100d));
             robot.addEquipment(new RadarEquipment());
             robot.setProgram(userProgram);
+            robot.enableLogging();
             game.addActor(robot);
         }
     }

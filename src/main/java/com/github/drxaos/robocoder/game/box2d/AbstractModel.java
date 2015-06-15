@@ -71,4 +71,26 @@ public abstract class AbstractModel {
         }
         return false;
     }
+
+    public Vec2 getTiePoint() {
+        return null;
+    }
+
+    public void applyForce(KPoint localPoint, Vec2 localForce) {
+        if (body == null) {
+            return;
+        }
+        Vec2 worldVector = body.getWorldVector(localForce);
+        Vec2 point = new Vec2((float) localPoint.getX(), (float) localPoint.getY());
+        Vec2 worldPoint = body.getWorldPoint(point);
+        body.applyForce(worldVector, worldPoint);
+    }
+
+    public void applyWorldForce(KPoint worldPoint, Vec2 worldForce) {
+        if (body == null) {
+            return;
+        }
+        Vec2 point = new Vec2((float) worldPoint.getX(), (float) worldPoint.getY());
+        body.applyForce(worldForce, point);
+    }
 }

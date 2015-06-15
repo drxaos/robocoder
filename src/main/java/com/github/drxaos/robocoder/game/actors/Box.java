@@ -23,4 +23,9 @@ public class Box extends Actor {
     public Color3f getColor() {
         return COLOR;
     }
+
+    @Override
+    public boolean isTowable() {
+        return true;
+    }
 }

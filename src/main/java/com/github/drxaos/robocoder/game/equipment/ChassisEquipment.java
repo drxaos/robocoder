@@ -38,7 +38,6 @@ public class ChassisEquipment implements Equipment {
     public static final String RIGHT = "right::";
     public static final String LEFT = "left::";
 
-    @Override
     public void communicate(Robot robot, Game game) {
         String req = robot.getBus().peekRequest();
         if (req != null && req.startsWith(CHASSIS)) {
@@ -63,6 +62,8 @@ public class ChassisEquipment implements Equipment {
     public void applyPhysics(Robot robot, Game game) {
         LEFT_ENGINE.set(0, (float) leftAccel);
         RIGHT_ENGINE.set(0, (float) rightAccel);
-        robot.getModel().applyForces(effectsMap);
+        for (Map.Entry<KPoint, Vec2> entry : effectsMap.entrySet()) {
+            robot.getModel().applyForce(entry.getKey(), entry.getValue());
+        }
     }
 }

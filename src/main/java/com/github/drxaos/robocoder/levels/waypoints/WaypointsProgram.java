@@ -16,7 +16,7 @@ public class WaypointsProgram extends AbstractProgram {
         while (true) {
 
             BasicMovement basicMovement = new BasicMovement(bus);
-            RobotDriver robotDriverDriver = new RobotDriver(bus);
+            RobotDriver robotDriver = new RobotDriver(bus);
             RadarDriver radarDriver = new RadarDriver(bus);
 
             ArrayList<KPoint> way = new ArrayList<KPoint>();
@@ -32,11 +32,11 @@ public class WaypointsProgram extends AbstractProgram {
             way.add(new KPoint(0, -10));
 
             for (KPoint wayPoint : way) {
-                while (!basicMovement.move(wayPoint, 0.5, 10000)) {
+                while (!basicMovement.move(wayPoint, 1, 10000)) {
                     basicMovement.stop();
                     KPoint failPoint = radarDriver.getPosition();
-                    robotDriverDriver.point(wayPoint);
-                    robotDriverDriver.say("Please drag me to that point!");
+                    robotDriver.point(wayPoint);
+                    robotDriver.say("Please drag me to that point!");
                     while (true) {
                         KPoint newPoint = radarDriver.getPosition();
                         if (basicMovement.distance(newPoint, failPoint) > 0.2) {
@@ -44,7 +44,7 @@ public class WaypointsProgram extends AbstractProgram {
                         }
                     }
                 }
-                robotDriverDriver.say(null);
+                robotDriver.say(null);
 
                 if (basicMovement.distance(radarDriver.getPosition(), new KPoint(0, 0)) < 0.3) {
                     basicMovement.stop();
