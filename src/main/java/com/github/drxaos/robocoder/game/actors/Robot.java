@@ -101,12 +101,27 @@ public class Robot extends Actor {
         }
     }
 
+    protected long lastRequestId = 0;
+    protected long freezeDetector = 0;
+    protected final long FREEZE_TIMEOUT = 500;
+
     @Override
     public void afterStep() {
         for (Equipment eq : equipment) {
             eq.communicate(this, game);
         }
-        bus.removeRequest();
+
+        // freeze detector
+        long requestId = bus.getRequestId();
+        if (lastRequestId == requestId) {
+            freezeDetector++;
+        } else {
+            lastRequestId = requestId;
+            freezeDetector = 0;
+        }
+        if (freezeDetector > FREEZE_TIMEOUT) {
+            bus.writeResponse("unknown");
+        }
     }
 
     public Bus getBus() {

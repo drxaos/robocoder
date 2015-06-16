@@ -37,6 +37,7 @@ public class ChassisEquipment implements Equipment {
     public static final String CHASSIS = "chassis::";
     public static final String RIGHT = "right::";
     public static final String LEFT = "left::";
+    public static final String ACCEPTED = "accepted";
 
     public void communicate(Robot robot, Game game) {
         String req = robot.getBus().getRequest();
@@ -45,8 +46,7 @@ public class ChassisEquipment implements Equipment {
                 try {
                     String val = req.substring((CHASSIS + LEFT).length());
                     setLeftAcceleration(Double.parseDouble(val));
-                    robot.getBus().removeRequest();
-                    robot.getBus().writeResponse(CHASSIS + "::accepted");
+                    robot.getBus().writeResponse(CHASSIS + ACCEPTED);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -54,8 +54,7 @@ public class ChassisEquipment implements Equipment {
                 try {
                     String val = req.substring((CHASSIS + RIGHT).length());
                     setRightAcceleration(Double.parseDouble(val));
-                    robot.getBus().removeRequest();
-                    robot.getBus().writeResponse(CHASSIS + "::accepted");
+                    robot.getBus().writeResponse(CHASSIS + ACCEPTED);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

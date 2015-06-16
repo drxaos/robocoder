@@ -19,6 +19,9 @@ public class JointsProgram extends AbstractProgram {
         basicMovement.move(new KPoint(0, 0), 1, 10000);
         basicMovement.stop();
 
+        // freeze
+        bus.request("hello!");
+
         while (true) {
             armDriver.tieForward();
 

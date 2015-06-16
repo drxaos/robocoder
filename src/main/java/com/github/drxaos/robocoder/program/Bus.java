@@ -5,11 +5,12 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Bus {
 
     private ReentrantLock reqLock = new ReentrantLock();
-    private String request;
-    private String response;
+    private volatile String request;
+    private volatile String response;
+    private volatile long reqId = 0;
 
     private void debug(String msg) {
-        //System.out.println(msg);
+        System.out.println(Thread.currentThread().getName() + ": " + msg);
     }
 
     public synchronized String request(String e) {
@@ -25,6 +26,7 @@ public class Bus {
                     ex.printStackTrace();
                 }
             }
+            reqId++;
             request = e;
             notifyAll();                // Awaken any waiting read
             debug("writeRequest done");
@@ -49,22 +51,29 @@ public class Bus {
     }
 
     public synchronized String getRequest() {
-        debug("peekRequest");
+        debug("getRequest");
         String e = request;
-        notifyAll();                // Awaken any waiting write
-        debug("peekRequest done: " + e);
+        debug("getRequest done: " + e);
         return e;
     }
 
-    public synchronized void removeRequest() {
-        debug("removeRequest");
-        request = null;
-        notifyAll();                // Awaken any waiting write
+    public synchronized long getRequestId() {
+        debug("getRequestId");
+        long e = -1;
+        if (request != null) {
+            e = reqId;
+        }
+        debug("getRequestId done: " + e);
+        return e;
     }
 
     public synchronized void writeResponse(String e) {
-        debug("writeResponse: " + e);
-        response = e;
+        if (request != null) {
+            debug("removeRequest");
+            request = null;
+            debug("writeResponse: " + e);
+            response = e;
+        }
         notifyAll();                // Awaken any waiting read
     }
 }
