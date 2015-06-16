@@ -501,7 +501,7 @@ public abstract class TestbedTest
     private final Vec2 p2 = new Vec2();
     private final Vec2 tangent = new Vec2();
     private final List<String> statsList = new ArrayList<String>();
-    private TestbedDrawer drawer;
+    protected TestbedDrawer drawer;
 
     public synchronized void step() {
         float hz = 60;

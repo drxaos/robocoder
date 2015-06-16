@@ -1,5 +1,6 @@
 package com.github.drxaos.robocoder.game;
 
+import com.github.drxaos.robocoder.game.actors.Actor;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.common.Color3f;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
+    protected List<Trace> traces = new ArrayList<Trace>();
 
     protected World world;
     protected DebugDraw debugDraw;
@@ -70,13 +72,31 @@ public class Game {
         return result;
     }
 
+    public static class Trace {
+        public static final int MAX_TTL = 20;
+        public KPoint[] points;
+        public Color3f color3f;
+        public int ttl = 20;
+
+        public Trace(KPoint[] points, Color3f color3f) {
+            this.points = points;
+            this.color3f = color3f;
+        }
+    }
+
+    public void addTrace(KPoint[] points, Color3f color3f) {
+        traces.add(new Trace(points, color3f));
+    }
+
     private static class RayCastClosestCallback implements RayCastCallback {
         Body fromBody;
         Vec2 m_point;
         Body body;
+        boolean scanSensors;
 
-        private RayCastClosestCallback(Body fromBody) {
+        private RayCastClosestCallback(Body fromBody, boolean scanSensors) {
             this.fromBody = fromBody;
+            this.scanSensors = scanSensors;
         }
 
         public void init() {
@@ -88,6 +108,11 @@ public class Game {
                                    Vec2 normal, float fraction) {
             body = fixture.getBody();
             m_point = point;
+
+            Actor actor = (Actor) ((Map) body.getUserData()).get("actor");
+            if (actor.isSensor() && !scanSensors) {
+                return -1;
+            }
             return fraction;
         }
 
@@ -112,9 +137,9 @@ public class Game {
         }
     }
 
-    public ScanResult resolveDirection(double angle, double scanDistance, Actor fromActor) {
+    public ScanResult resolveDirection(double angle, double scanDistance, Actor fromActor, boolean scanSensors) {
         Map<Actor, Double> result = new HashMap<Actor, Double>();
-        RayCastClosestCallback callback = new RayCastClosestCallback(fromActor.getModel().body);
+        RayCastClosestCallback callback = new RayCastClosestCallback(fromActor.getModel().body, scanSensors);
         world.raycast(callback,
                 fromActor.getModel().getPositionVec2(),
                 fromActor.getModel().getPositionVec2().add(

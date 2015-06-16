@@ -26,6 +26,7 @@ public abstract class AbstractLevel extends TestbedTest {
     public synchronized void step() {
         game.beforeStep();
         super.step();
+        drawer.drawTraces(game.traces);
         game.afterStep();
     }
 

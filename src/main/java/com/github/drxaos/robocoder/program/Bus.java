@@ -10,7 +10,7 @@ public class Bus {
     private volatile long reqId = 0;
 
     private void debug(String msg) {
-        System.out.println(Thread.currentThread().getName() + ": " + msg);
+        //System.out.println(Thread.currentThread().getName() + ": " + msg);
     }
 
     public synchronized String request(String e) {

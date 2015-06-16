@@ -1,6 +1,6 @@
 package com.github.drxaos.robocoder.game.box2d;
 
-import com.github.drxaos.robocoder.game.Actor;
+import com.github.drxaos.robocoder.game.actors.Actor;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 import straightedge.geom.KPoint;

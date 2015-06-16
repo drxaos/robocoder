@@ -1,5 +1,6 @@
-package com.github.drxaos.robocoder.game;
+package com.github.drxaos.robocoder.game.actors;
 
+import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.box2d.AbstractModel;
 import org.jbox2d.common.Color3f;
 
@@ -27,5 +28,11 @@ public abstract class Actor {
 
     public Color3f getColor() {
         return null;
+    }
+
+    public abstract String[] getRadarProperties();
+
+    public boolean isSensor() {
+        return false;
     }
 }

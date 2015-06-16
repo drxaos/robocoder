@@ -1,6 +1,5 @@
 package com.github.drxaos.robocoder.game.actors;
 
-import com.github.drxaos.robocoder.game.Actor;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.box2d.RobotModel;
 import com.github.drxaos.robocoder.game.equipment.Equipment;
@@ -129,7 +128,7 @@ public class Robot extends Actor {
     }
 
     public boolean tie(boolean back) {
-        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this);
+        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this, false);
         if (scanResult == null) {
             return false;
         }
@@ -147,7 +146,7 @@ public class Robot extends Actor {
 
     public void push(boolean back, float strength) {
         model.untie();
-        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this);
+        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this,false);
         if (scanResult == null) {
             return;
         }
@@ -160,5 +159,10 @@ public class Robot extends Actor {
     @Override
     public boolean isTowable() {
         return !active;
+    }
+
+    @Override
+    public String[] getRadarProperties() {
+        return new String[]{"robot", "dynamic", "breakable", uid};
     }
 }

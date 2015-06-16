@@ -1,6 +1,7 @@
 package com.github.drxaos.robocoder.ui;
 
-import com.github.drxaos.robocoder.game.Actor;
+import com.github.drxaos.robocoder.game.Game;
+import com.github.drxaos.robocoder.game.actors.Actor;
 import com.github.drxaos.robocoder.ui.j2d.DebugDrawJ2D;
 import com.github.drxaos.robocoder.ui.j2d.TestPanelJ2D;
 import org.jbox2d.callbacks.DebugDraw;
@@ -21,6 +22,8 @@ import org.jbox2d.dynamics.joints.PulleyJoint;
 import org.jbox2d.pooling.IWorldPool;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class TestbedDrawer {
@@ -118,6 +121,25 @@ public class TestbedDrawer {
         }
         for (Joint j = m_jointList; j != null; j = j.getNext()) {
             drawJoint(j);
+        }
+    }
+
+    public void drawTraces(List<Game.Trace> traces) {
+        for (Iterator<Game.Trace> iterator = traces.iterator(); iterator.hasNext(); ) {
+            Game.Trace trace = iterator.next();
+
+            if (trace.points.length == 2) {
+                ((DebugDrawJ2D) m_debugDraw).drawSegment(
+                        new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
+                        new Vec2((float) trace.points[1].x, (float) trace.points[1].y),
+                        trace.color3f, (float) (1d * trace.ttl / Game.Trace.MAX_TTL / 2)
+                );
+            }
+
+            trace.ttl--;
+            if (trace.ttl <= 0) {
+                iterator.remove();
+            }
         }
     }
 

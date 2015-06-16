@@ -1,6 +1,5 @@
 package com.github.drxaos.robocoder.game.actors;
 
-import com.github.drxaos.robocoder.game.Actor;
 import com.github.drxaos.robocoder.game.box2d.BoxModel;
 import org.jbox2d.common.Color3f;
 import straightedge.geom.KPoint;
@@ -22,6 +21,11 @@ public class Box extends Actor {
     @Override
     public Color3f getColor() {
         return COLOR;
+    }
+
+    @Override
+    public String[] getRadarProperties() {
+        return new String[]{"box", "dynamic", "breakable"};
     }
 
     @Override

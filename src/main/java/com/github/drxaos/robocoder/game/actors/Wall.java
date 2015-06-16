@@ -1,7 +1,6 @@
 package com.github.drxaos.robocoder.game.actors;
 
 
-import com.github.drxaos.robocoder.game.Actor;
 import com.github.drxaos.robocoder.game.box2d.AbstractModel;
 import com.github.drxaos.robocoder.game.box2d.StaticModel;
 import straightedge.geom.KPoint;
@@ -35,5 +34,10 @@ public class Wall extends Actor {
     @Override
     public AbstractModel getModel() {
         return model;
+    }
+
+    @Override
+    public String[] getRadarProperties() {
+        return new String[]{"wall", "static", "unbreakable"};
     }
 }
