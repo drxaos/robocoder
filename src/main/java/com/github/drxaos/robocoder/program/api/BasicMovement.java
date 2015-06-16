@@ -89,7 +89,7 @@ public class BasicMovement {
             float width = 2;
             KPoint current = radarDriver.getPosition();
             double myAngle = radarDriver.getAngle();
-            System.out.println(current.toString() + ", a:" + myAngle / Math.PI * 180);
+            //System.out.println(current.toString() + ", a:" + myAngle / Math.PI * 180);
             double angleToTarget = angle(current, to);
             double azimuth = differenceAngle(myAngle, angleToTarget);
             double distance = distance(to, current);

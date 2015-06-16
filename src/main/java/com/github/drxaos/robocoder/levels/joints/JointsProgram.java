@@ -19,22 +19,27 @@ public class JointsProgram extends AbstractProgram {
         basicMovement.move(new KPoint(0, 0), 1, 10000);
         basicMovement.stop();
 
-        armDriver.tieForward();
-
-        basicMovement.move(new KPoint(10, 0), 1, 10000);
-        basicMovement.stop();
-
-        armDriver.pushForward();
-        armDriver.pushForward();
-        armDriver.pushForward();
-        armDriver.pushForward();
-        armDriver.pushForward();
-
-        chassisDriver.setLeftAcceleration(100d);
-        chassisDriver.setRightAcceleration(100d);
-
         while (true) {
+            armDriver.tieForward();
+
+            basicMovement.move(new KPoint(10, 0), 1, 10000);
+            basicMovement.stop();
+
             armDriver.pushForward();
+            armDriver.pushForward();
+            armDriver.pushForward();
+            armDriver.pushForward();
+            armDriver.pushForward();
+
+            chassisDriver.setLeftAcceleration(100d);
+            chassisDriver.setRightAcceleration(100d);
+
+            long end = radarDriver.getTime() + 150;
+            while (radarDriver.getTime() < end) {
+                armDriver.pushForward();
+            }
+            while (radarDriver.getTime() < end + 25) {
+            }
         }
     }
 }
