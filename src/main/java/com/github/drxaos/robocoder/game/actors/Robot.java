@@ -5,6 +5,7 @@ import com.github.drxaos.robocoder.game.box2d.RobotModel;
 import com.github.drxaos.robocoder.game.equipment.Equipment;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.Bus;
+import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
 import straightedge.geom.KPoint;
 
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Robot extends Actor {
+
+    public static final float ARM_DISTANCE = 2;
 
     List<Equipment> equipment = new ArrayList<Equipment>();
     RobotModel model;
@@ -74,7 +77,7 @@ public class Robot extends Actor {
                     log("Trying to recover...");
                     Thread.sleep(3000);
                     setProgram(program.getClass());
-                    userProgramThread.start();
+                    start();
                 } catch (InterruptedException e1) {
                     log(e1);
                 }
@@ -128,7 +131,10 @@ public class Robot extends Actor {
     }
 
     public boolean tie(boolean back) {
-        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this, false);
+        float angle = (float) (model.getAngle() + (back ? Math.PI : 0));
+        traceArm(angle, false);
+
+        Game.ScanResult scanResult = game.resolveDirection(angle, ARM_DISTANCE, this, false);
         if (scanResult == null) {
             return false;
         }
@@ -140,18 +146,43 @@ public class Robot extends Actor {
         return true;
     }
 
+    private void traceArm(float angle, boolean push) {
+        Color3f color = push ? new Color3f(.9f, .5f, .5f) : new Color3f(.5f, .9f, .5f);
+        KPoint start = getModel().getPosition();
+        KPoint end = getModel().getPosition().translateCopy(
+                Math.cos(angle) * ARM_DISTANCE,
+                Math.sin(angle) * ARM_DISTANCE);
+        KPoint left = getModel().getPosition().translateCopy(
+                Math.cos(angle) * ARM_DISTANCE * 3 / 4,
+                Math.sin(angle) * ARM_DISTANCE * 3 / 4
+        ).translateCopy(
+                Math.cos(angle + Math.PI / 2) * ARM_DISTANCE * 1 / 4,
+                Math.sin(angle + Math.PI / 2) * ARM_DISTANCE * 1 / 4);
+        KPoint right = getModel().getPosition().translateCopy(
+                Math.cos(angle) * ARM_DISTANCE * 3 / 4,
+                Math.sin(angle) * ARM_DISTANCE * 3 / 4
+        ).translateCopy(
+                Math.cos(angle - Math.PI / 2) * ARM_DISTANCE * 1 / 4,
+                Math.sin(angle - Math.PI / 2) * ARM_DISTANCE * 1 / 4);
+        game.addTrace(new KPoint[]{start, end}, color);
+        game.addTrace(new KPoint[]{left, end}, color);
+        game.addTrace(new KPoint[]{right, end}, color);
+    }
+
     public void untie() {
         model.untie();
     }
 
     public void push(boolean back, float strength) {
+        float angle = (float) (model.getAngle() + (back ? Math.PI : 0));
+        traceArm(angle, true);
+
         model.untie();
-        Game.ScanResult scanResult = game.resolveDirection(model.getAngle() + (back ? Math.PI : 0), 2, this,false);
+        Game.ScanResult scanResult = game.resolveDirection(angle, ARM_DISTANCE, this, false);
         if (scanResult == null) {
             return;
         }
         Actor actor = scanResult.actor;
-        double angle = model.getAngle();
         Vec2 force = new Vec2((float) (Math.cos(angle) * strength), (float) (Math.sin(angle) * strength));
         actor.getModel().applyWorldForce(scanResult.point, force);
     }
