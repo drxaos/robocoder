@@ -14,17 +14,27 @@ public class ArmEquipment implements Equipment {
     float strength = 2000;
 
     public void communicate(Robot robot, Game game) {
-        String req = robot.getBus().peekRequest();
+        String req = robot.getBus().getRequest();
         if ("arm::tie::forward".equals(req)) {
             tieForward = true;
+            robot.getBus().removeRequest();
+            robot.getBus().writeResponse("arm::accepted");
         } else if ("arm::tie::back".equals(req)) {
             tieBack = true;
+            robot.getBus().removeRequest();
+            robot.getBus().writeResponse("arm::accepted");
         } else if ("arm::untie".equals(req)) {
             untie = true;
+            robot.getBus().removeRequest();
+            robot.getBus().writeResponse("arm::accepted");
         } else if ("arm::push::forward".equals(req)) {
             pushForward = true;
+            robot.getBus().removeRequest();
+            robot.getBus().writeResponse("arm::accepted");
         } else if ("arm::push::back".equals(req)) {
             pushBack = true;
+            robot.getBus().removeRequest();
+            robot.getBus().writeResponse("arm::accepted");
         }
     }
 

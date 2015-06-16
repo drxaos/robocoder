@@ -11,11 +11,11 @@ public class ChassisDriver {
     }
 
     public void setLeftAcceleration(Double percent) {
-        bus.writeRequest("chassis::left::" + percent);
+        bus.request("chassis::left::" + percent);
     }
 
     public void setRightAcceleration(Double percent) {
-        bus.writeRequest("chassis::right::" + percent);
+        bus.request("chassis::right::" + percent);
     }
 
 }

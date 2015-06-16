@@ -10,23 +10,23 @@ public class ArmDriver {
     }
 
     public void tieForward() {
-        bus.writeRequest("arm::tie::forward");
+        bus.request("arm::tie::forward");
     }
 
     public void tieBack() {
-        bus.writeRequest("arm::tie::back");
+        bus.request("arm::tie::back");
     }
 
     public void pushForward() {
-        bus.writeRequest("arm::push::forward");
+        bus.request("arm::push::forward");
     }
 
     public void pushBack() {
-        bus.writeRequest("arm::push::back");
+        bus.request("arm::push::back");
     }
 
     public void untie() {
-        bus.writeRequest("arm::untie");
+        bus.request("arm::untie");
     }
 
 }

@@ -39,12 +39,14 @@ public class ChassisEquipment implements Equipment {
     public static final String LEFT = "left::";
 
     public void communicate(Robot robot, Game game) {
-        String req = robot.getBus().peekRequest();
+        String req = robot.getBus().getRequest();
         if (req != null && req.startsWith(CHASSIS)) {
             if (req.startsWith(CHASSIS + LEFT)) {
                 try {
                     String val = req.substring((CHASSIS + LEFT).length());
                     setLeftAcceleration(Double.parseDouble(val));
+                    robot.getBus().removeRequest();
+                    robot.getBus().writeResponse(CHASSIS + "::accepted");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -52,6 +54,8 @@ public class ChassisEquipment implements Equipment {
                 try {
                     String val = req.substring((CHASSIS + RIGHT).length());
                     setRightAcceleration(Double.parseDouble(val));
+                    robot.getBus().removeRequest();
+                    robot.getBus().writeResponse(CHASSIS + "::accepted");
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
