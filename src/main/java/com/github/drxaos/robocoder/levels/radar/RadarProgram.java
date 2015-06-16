@@ -7,9 +7,6 @@ import com.github.drxaos.robocoder.program.api.ChassisDriver;
 import com.github.drxaos.robocoder.program.api.RadarDriver;
 import straightedge.geom.KPoint;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class RadarProgram extends AbstractProgram {
 
@@ -20,23 +17,48 @@ public class RadarProgram extends AbstractProgram {
         ArmDriver armDriver = new ArmDriver(bus);
 
         while (true) {
-            List<Double> angles = new ArrayList<Double>();
+            int points = 0;
+            double sx = 0, sy = 0;
             for (int i = 0; i < 360; i += 2) {
                 double angle = Math.PI * i / 180;
                 RadarDriver.Result scan = radarDriver.scan(angle, true);
                 if (scan.properties.contains("box")) {
-                    angles.add(angle);
+                    points++;
+                    sx += Math.cos(angle) * scan.distance;
+                    sy += Math.sin(angle) * scan.distance;
+                } else if(points > 0) {
+                    break;
                 }
             }
-            double sx = 0, sy = 0;
-            for (Double angle : angles) {
-                sx += Math.cos(angle);
-                sy += Math.sin(angle);
+            if (points == 0) {
+                continue;
             }
-            sx = sx / angles.size();
-            sy = sy / angles.size();
-            double center = basicMovement.angle(new KPoint(0, 0), new KPoint(sx, sy));
-            basicMovement.rotate(center, false, 10000);
+            sx = sx / points;
+            sy = sy / points;
+            KPoint target = radarDriver.getPosition().translateCopy(sx, sy);
+            if (Math.abs(target.getX()) < 1 && Math.abs(target.getX()) < 1) {
+                continue;
+            }
+
+            basicMovement.move(target, 0.5, 10000);
+
+            RadarDriver.Result scan = radarDriver.scan(radarDriver.getAngle(), true);
+            if (scan != null && scan.distance < 2 && scan.properties.contains("box")) {
+                armDriver.tieForward();
+                basicMovement.move(new KPoint(0, 0), 0.5, 10000);
+                armDriver.untie();
+
+                while (true) {
+                    RadarDriver.Result scan2 = radarDriver.scan(radarDriver.getAngle(), true);
+                    if (scan2 == null || scan2.distance >= 2 || !scan2.properties.contains("box")) {
+                        break;
+                    }
+                }
+                long wait = radarDriver.getTime() + 150;
+                while (radarDriver.getTime() < wait) {
+                    // wait
+                }
+            }
         }
     }
 }

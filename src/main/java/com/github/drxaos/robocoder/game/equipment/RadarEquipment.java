@@ -67,6 +67,9 @@ public class RadarEquipment implements Equipment {
 
     public void applyPhysics(Robot robot, Game game) {
         if (scanAngle != null) {
+            if (scanAngle.isNaN()) {
+                scanAngle = 0d;
+            }
             Game.ScanResult scanResult = game.resolveDirection(scanAngle, scanDistance, robot, scanSensors);
             if (scanResult != null) {
                 robot.getBus().writeResponse(scanResult.distance + "::" +

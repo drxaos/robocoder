@@ -25,11 +25,17 @@ public class ChassisEquipment implements Equipment {
     }
 
     public void setLeftAcceleration(Double percent) {
+        if (percent.isNaN()) {
+            percent = 0d;
+        }
         percent = Math.max(Math.min(percent, 100), -100);
         leftAccel = maxAccel * percent / 100;
     }
 
     public void setRightAcceleration(Double percent) {
+        if (percent.isNaN()) {
+            percent = 0d;
+        }
         percent = Math.max(Math.min(percent, 100), -100);
         rightAccel = maxAccel * percent / 100;
     }

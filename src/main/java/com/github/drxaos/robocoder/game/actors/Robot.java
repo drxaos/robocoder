@@ -115,7 +115,7 @@ public class Robot extends Actor {
 
         // freeze detector
         long requestId = bus.getRequestId();
-        if (lastRequestId == requestId) {
+        if (lastRequestId == requestId && requestId != -1) {
             freezeDetector++;
         } else {
             lastRequestId = requestId;

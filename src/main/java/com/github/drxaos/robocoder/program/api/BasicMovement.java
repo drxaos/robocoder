@@ -82,6 +82,9 @@ public class BasicMovement {
     }
 
     public boolean move(KPoint to, double accuracy, int timeout) {
+        if (Double.isNaN(to.getX()) | Double.isNaN(to.getX())) {
+            return false;
+        }
         long end = radarDriver.getTime() + timeout;
         while (radarDriver.getTime() < end) {
             int force = 80;
