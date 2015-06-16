@@ -24,6 +24,8 @@
  * Created at 3:09:27 AM Jul 17, 2010
  * <p/>
  * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
  */
 /**
  * Created at 3:09:27 AM Jul 17, 2010
@@ -68,6 +70,27 @@ public class DebugDrawJ2D extends DebugDraw {
         Vec2[] vecs = vec2Array.get(circlePoints);
         generateCirle(center, radius, vecs, circlePoints);
         drawPolygon(vecs, circlePoints, color);
+    }
+
+    public void drawCircle(Vec2 center, float radius, Color3f color, float alpha) {
+        Vec2[] vecs = vec2Array.get(circlePoints);
+        generateCirle(center, radius, vecs, circlePoints);
+        drawPolygon(vecs, circlePoints, color, alpha);
+    }
+
+    public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color, float alpha) {
+        if (vertexCount == 1) {
+            drawSegment(vertices[0], vertices[0], color, alpha);
+            return;
+        }
+
+        for (int i = 0; i < vertexCount - 1; i += 1) {
+            drawSegment(vertices[i], vertices[i + 1], color, alpha);
+        }
+
+        if (vertexCount > 2) {
+            drawSegment(vertices[vertexCount - 1], vertices[0], color, alpha);
+        }
     }
 
     @Override

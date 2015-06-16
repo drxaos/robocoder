@@ -134,6 +134,27 @@ public class TestbedDrawer {
                         new Vec2((float) trace.points[1].x, (float) trace.points[1].y),
                         trace.color3f, (float) (1d * trace.ttl / Game.Trace.MAX_TTL / 2)
                 );
+            } else if (trace.points.length == 1 && trace.radius != null) {
+                ((DebugDrawJ2D) m_debugDraw).drawCircle(
+                        new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
+                        trace.radius,
+                        trace.color3f, (float) (1d * trace.ttl / Game.Trace.MAX_TTL / 2)
+                );
+            } else if (trace.points.length == 1) {
+                ((DebugDrawJ2D) m_debugDraw).drawCircle(
+                        new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
+                        .2f,
+                        trace.color3f, (float) (1d * trace.ttl / Game.Trace.MAX_TTL / 2)
+                );
+            } else {
+                Vec2[] vec2s = new Vec2[trace.points.length];
+                for (int i = 0; i < trace.points.length; i++) {
+                    vec2s[i] = new Vec2((float) trace.points[i].x, (float) trace.points[i].y);
+                }
+                ((DebugDrawJ2D) m_debugDraw).drawPolygon(
+                        vec2s, vec2s.length,
+                        trace.color3f, (float) (1d * trace.ttl / Game.Trace.MAX_TTL / 2)
+                );
             }
 
             trace.ttl--;

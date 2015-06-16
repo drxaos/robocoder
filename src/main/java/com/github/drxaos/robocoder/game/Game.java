@@ -75,11 +75,18 @@ public class Game {
     public static class Trace {
         public static final int MAX_TTL = 20;
         public KPoint[] points;
+        public Float radius;
         public Color3f color3f;
         public int ttl = 20;
 
         public Trace(KPoint[] points, Color3f color3f) {
             this.points = points;
+            this.color3f = color3f;
+        }
+
+        public Trace(KPoint point, Float radius, Color3f color3f) {
+            this.points = new KPoint[]{point};
+            this.radius = radius;
             this.color3f = color3f;
         }
     }
