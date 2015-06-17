@@ -3,8 +3,8 @@ package com.github.drxaos.robocoder.game.actors;
 
 import com.github.drxaos.robocoder.game.box2d.AbstractModel;
 import com.github.drxaos.robocoder.game.box2d.StaticModel;
-import straightedge.geom.KPoint;
-import straightedge.geom.KPolygon;
+import com.github.drxaos.robocoder.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPolygon;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

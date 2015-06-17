@@ -4,8 +4,8 @@ package com.github.drxaos.robocoder.game.actors;
 import com.github.drxaos.robocoder.game.box2d.AbstractModel;
 import com.github.drxaos.robocoder.game.box2d.SensorModel;
 import org.jbox2d.common.Color3f;
-import straightedge.geom.KPoint;
-import straightedge.geom.KPolygon;
+import com.github.drxaos.robocoder.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPolygon;
 
 import java.util.ArrayList;
 import java.util.List;

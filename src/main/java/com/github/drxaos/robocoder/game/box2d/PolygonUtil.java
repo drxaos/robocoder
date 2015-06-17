@@ -2,9 +2,9 @@ package com.github.drxaos.robocoder.game.box2d;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Polygon;
-import mxb.jts.triangulate.EarClipper;
-import straightedge.geom.KPolygon;
-import straightedge.geom.PolygonConverter;
+import com.github.drxaos.robocoder.geom.EarClipper;
+import com.github.drxaos.robocoder.geom.KPolygon;
+import com.github.drxaos.robocoder.geom.PolygonConverter;
 
 import java.util.ArrayList;
 import java.util.List;

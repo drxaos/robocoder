@@ -3,7 +3,6 @@ package com.github.drxaos.robocoder.levels.tutorial;
 import com.github.drxaos.robocoder.game.AbstractLevel;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.Runner;
-import com.github.drxaos.robocoder.game.actors.Box;
 import com.github.drxaos.robocoder.game.actors.Robot;
 import com.github.drxaos.robocoder.game.actors.StartPad;
 import com.github.drxaos.robocoder.game.actors.TriggerPad;
@@ -12,10 +11,9 @@ import com.github.drxaos.robocoder.game.equipment.ChassisEquipment;
 import com.github.drxaos.robocoder.game.equipment.RadarEquipment;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import org.jbox2d.common.Color3f;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import javax.swing.*;
-import java.util.LinkedHashMap;
 
 public class Tutorial01Chassis extends AbstractLevel {
     public static void run(Class<? extends AbstractProgram> program) {
@@ -24,14 +22,10 @@ public class Tutorial01Chassis extends AbstractLevel {
 
     StartPad startPad;
     TriggerPad[] pads;
-    LinkedHashMap<TriggerPad, Boolean> touched = new LinkedHashMap<TriggerPad, Boolean>();
     Robot robot;
-    Box box;
 
     @Override
-    public Game createGame() {
-        Game game = new Game(getWorld(), getDebugDraw());
-
+    public void initLevel(Game game) {
         startPad = new StartPad(new KPoint(0, 0), 0d);
         game.addActor(startPad);
 
@@ -42,7 +36,6 @@ public class Tutorial01Chassis extends AbstractLevel {
                 new TriggerPad(new KPoint(20, 20), 2),
         };
         for (TriggerPad pad : pads) {
-            touched.put(pad, false);
             game.addActor(pad);
         }
 
@@ -53,8 +46,6 @@ public class Tutorial01Chassis extends AbstractLevel {
         robot.setProgram(userProgram);
         robot.enableLogging();
         game.addActor(robot);
-
-        return game;
     }
 
     long successTimer = 0;
@@ -72,38 +63,45 @@ public class Tutorial01Chassis extends AbstractLevel {
     @Override
     public synchronized void step() {
         super.step();
+        traceTriggers();
+        if (!success) {
+            checkSuccess();
+        }
+    }
+
+    private void checkSuccess() {
+        if (!startPad.getContacts().contains(robot)) {
+            successTimer = 0;
+            return;
+        }
+        for (TriggerPad pad : pads) {
+            if (!pad.isTriggered()) {
+                successTimer = 0;
+                return;
+            }
+        }
+        if (++successTimer > 100) {
+            success = true;
+            JOptionPane.showMessageDialog(null, "Level completed!", "Success!", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+
+    private void traceTriggers() {
         if (game.getTime() % 150 == 20) {
-            if (!touched.get(pads[0])) {
+            if (!pads[0].isTriggered()) {
                 game.addTrace(trace1, traceColor, 250);
                 game.addTrace(trace1a, traceColor, 250);
             }
-            if (!touched.get(pads[1])) {
+            if (!pads[1].isTriggered()) {
                 game.addTrace(trace2, traceColor, 250);
             }
-            if (!touched.get(pads[2])) {
+            if (!pads[2].isTriggered()) {
                 game.addTrace(trace3, traceColor, 250);
                 game.addTrace(trace3a, traceColor, 250);
             }
-            if (!touched.get(pads[3])) {
+            if (!pads[3].isTriggered()) {
                 game.addTrace(trace4, traceColor, 250);
                 game.addTrace(trace4a, traceColor, 250);
-            }
-        }
-        for (TriggerPad pad : touched.keySet()) {
-            if (pad.getContacts().contains(robot)) {
-                pad.getModel().body.setActive(false);
-                touched.put(pad, true);
-            }
-        }
-        if (!success) {
-            if (startPad.getContacts().contains(robot) && !touched.values().contains(false)) {
-                successTimer++;
-            } else {
-                successTimer = 0;
-            }
-            if (successTimer > 100) {
-                success = true;
-                JOptionPane.showMessageDialog(null, "Level completed!", "Success!", JOptionPane.INFORMATION_MESSAGE);
             }
         }
     }

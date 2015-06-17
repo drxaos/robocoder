@@ -1,11 +1,10 @@
 package com.github.drxaos.robocoder.levels.waypoints;
 
-import com.github.drxaos.robocoder.game.Runner;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.api.BasicMovement;
 import com.github.drxaos.robocoder.program.api.RadarDriver;
 import com.github.drxaos.robocoder.program.api.RobotDriver;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.ArrayList;
 

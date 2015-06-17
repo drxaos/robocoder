@@ -12,9 +12,12 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
@@ -81,6 +84,7 @@ public class Game {
         public Color3f color3f;
         public int startTtl = 20;
         public int ttl = 20;
+        public float width = .2f;
 
         public Trace(KPoint[] points, Color3f color3f) {
             this.points = points;
@@ -205,10 +209,10 @@ public class Game {
             Actor actorB = (Actor) ((Map) fixtureB.getBody().getUserData()).get("actor");
 
             if (actorA.isSensor()) {
-                ((Set<Actor>) ((Map) fixtureA.getBody().getUserData()).get("contacts")).add(actorB);
+                actorA.beginContact(actorB);
             }
             if (actorB.isSensor()) {
-                ((Set<Actor>) ((Map) fixtureB.getBody().getUserData()).get("contacts")).add(actorA);
+                actorB.beginContact(actorA);
             }
         }
 
@@ -220,10 +224,10 @@ public class Game {
             Actor actorB = (Actor) ((Map) fixtureB.getBody().getUserData()).get("actor");
 
             if (actorA.isSensor()) {
-                ((Set<Actor>) ((Map) fixtureA.getBody().getUserData()).get("contacts")).remove(actorB);
+                actorA.endContact(actorB);
             }
             if (actorB.isSensor()) {
-                ((Set<Actor>) ((Map) fixtureB.getBody().getUserData()).get("contacts")).remove(actorA);
+                actorB.endContact(actorA);
             }
         }
 

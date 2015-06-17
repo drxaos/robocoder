@@ -4,7 +4,7 @@ import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.actors.Robot;
 import com.sun.deploy.util.StringUtils;
 import org.jbox2d.common.Color3f;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.Arrays;
 

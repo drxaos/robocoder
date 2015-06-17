@@ -3,9 +3,12 @@ package com.github.drxaos.robocoder.game.box2d;
 import com.github.drxaos.robocoder.game.actors.Actor;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractModel {
     public BodyDef bodyDef;
@@ -28,9 +31,6 @@ public abstract class AbstractModel {
         Body body = this.world.createBody(this.actor.getModel().bodyDef);
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("actor", this.actor);
-        if (this.actor.isSensor()) {
-            data.put("contacts", new HashSet<Actor>());
-        }
         body.setUserData(data);
         for (FixtureDef fixtureDef : this.actor.getModel().fixtureDefs) {
             body.createFixture(fixtureDef);

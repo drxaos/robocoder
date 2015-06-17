@@ -2,14 +2,24 @@ package com.github.drxaos.robocoder.game.actors;
 
 
 import org.jbox2d.common.Color3f;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.List;
 
 public class TriggerPad extends Pad {
 
-    public static final Color3f activeColor = new Color3f(.5f, .5f, .9f);
+    public static final Color3f waitingColor = new Color3f(.5f, .5f, .9f);
     public static final Color3f triggeredColor = new Color3f(.3f, .3f, .3f);
+
+    protected boolean triggered = false;
+
+    public void setTriggered(boolean triggered) {
+        this.triggered = triggered;
+    }
+
+    public boolean isTriggered() {
+        return triggered;
+    }
 
     public TriggerPad(List<KPoint> vertices, KPoint position, double angle) {
         super(vertices, position, angle);
@@ -30,6 +40,13 @@ public class TriggerPad extends Pad {
 
     @Override
     public Color3f getColor() {
-        return model.body.isActive() ? activeColor : triggeredColor;
+        return triggered ? triggeredColor : waitingColor;
+    }
+
+    @Override
+    public void beginContact(Actor actor) {
+        if (actor.hasTag("dynamic")) {
+            triggered = true;
+        }
     }
 }

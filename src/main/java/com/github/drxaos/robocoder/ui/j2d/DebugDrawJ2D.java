@@ -26,6 +26,14 @@
  * Created at 3:09:27 AM Jul 17, 2010
  * <p/>
  * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
  */
 /**
  * Created at 3:09:27 AM Jul 17, 2010
@@ -80,16 +88,16 @@ public class DebugDrawJ2D extends DebugDraw {
 
     public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color, float alpha) {
         if (vertexCount == 1) {
-            drawSegment(vertices[0], vertices[0], color, alpha);
+            drawSegment(vertices[0], vertices[0], color, 1, alpha);
             return;
         }
 
         for (int i = 0; i < vertexCount - 1; i += 1) {
-            drawSegment(vertices[i], vertices[i + 1], color, alpha);
+            drawSegment(vertices[i], vertices[i + 1], color, 1, alpha);
         }
 
         if (vertexCount > 2) {
-            drawSegment(vertices[vertexCount - 1], vertices[0], color, alpha);
+            drawSegment(vertices[vertexCount - 1], vertices[0], color, 1, alpha);
         }
     }
 
@@ -107,6 +115,10 @@ public class DebugDrawJ2D extends DebugDraw {
 
     private final Vec2 sp1 = new Vec2();
     private final Vec2 sp2 = new Vec2();
+    private final Vec2 sp3 = new Vec2();
+    private final Vec2 sp4 = new Vec2();
+    private final Vec2 sp5 = new Vec2();
+    private final Vec2 sp6 = new Vec2();
 
     @Override
     public void drawSegment(Vec2 p1, Vec2 p2, Color3f color) {
@@ -120,15 +132,22 @@ public class DebugDrawJ2D extends DebugDraw {
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
     }
 
-    public void drawSegment(Vec2 p1, Vec2 p2, Color3f color, float alpha) {
+    public void drawSegment(Vec2 p1, Vec2 p2, Color3f color, float width, float alpha) {
         getWorldToScreenToOut(p1, sp1);
         getWorldToScreenToOut(p2, sp2);
+        sp3.set(0, 0);
+        getWorldToScreenToOut(sp3, sp4);
+        sp5.set(width, 0);
+        getWorldToScreenToOut(sp5, sp6);
 
         Graphics2D g = getGraphics();
         Color c = cpool.getColor(color.x, color.y, color.z, alpha);
         g.setColor(c);
 
+        Stroke stroke = g.getStroke();
+        g.setStroke(new BasicStroke(sp6.x - sp4.x));
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
+        g.setStroke(stroke);
     }
 
     public void drawAABB(AABB argAABB, Color3f color) {

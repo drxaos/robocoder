@@ -13,9 +13,7 @@ import java.util.ArrayList;
 public class WayTest extends AbstractLevel {
 
     @Override
-    public Game createGame() {
-        Game game = new Game(getWorld(), getDebugDraw());
-
+    public void initLevel(Game game) {
         ArrayList<Point2D> points = new ArrayList<Point2D>();
 
         double w = 20;
@@ -42,8 +40,6 @@ public class WayTest extends AbstractLevel {
         robot.setProgram(userProgram);
         robot.enableLogging();
         game.addActor(robot);
-
-        return game;
     }
 
     int n = 2;

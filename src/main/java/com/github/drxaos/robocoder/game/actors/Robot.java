@@ -7,7 +7,7 @@ import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.Bus;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.ArrayList;
 import java.util.List;

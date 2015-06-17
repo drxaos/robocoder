@@ -2,7 +2,7 @@ package com.github.drxaos.robocoder.game.actors;
 
 import com.github.drxaos.robocoder.game.box2d.BoxModel;
 import org.jbox2d.common.Color3f;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 public class Box extends Actor {
     BoxModel model;

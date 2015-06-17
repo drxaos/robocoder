@@ -4,8 +4,9 @@ import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.box2d.AbstractModel;
 import org.jbox2d.common.Color3f;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public abstract class Actor {
@@ -36,6 +37,16 @@ public abstract class Actor {
 
     public abstract String[] getTags();
 
+    public Set<String> getTagsSet() {
+        return new HashSet<String>(Arrays.asList(getTags()));
+    }
+
+    public boolean hasTag(String tag) {
+        return getTagsSet().contains(tag);
+    }
+
+    protected HashSet<Actor> contacts = new HashSet<Actor>();
+
     public boolean isSensor() {
         return false;
     }
@@ -44,6 +55,14 @@ public abstract class Actor {
         if (!isSensor()) {
             return null;
         }
-        return ((HashSet<Actor>) ((Map) getModel().body.getUserData()).get("contacts"));
+        return Collections.unmodifiableSet(contacts);
+    }
+
+    public void beginContact(Actor actor) {
+        contacts.add(actor);
+    }
+
+    public void endContact(Actor actor) {
+        contacts.remove(actor);
     }
 }

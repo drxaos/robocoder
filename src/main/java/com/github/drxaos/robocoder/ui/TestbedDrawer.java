@@ -132,7 +132,7 @@ public class TestbedDrawer {
                 ((DebugDrawJ2D) m_debugDraw).drawSegment(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
                         new Vec2((float) trace.points[1].x, (float) trace.points[1].y),
-                        trace.color3f, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
                 );
             } else if (trace.points.length == 1 && trace.radius != null) {
                 ((DebugDrawJ2D) m_debugDraw).drawCircle(

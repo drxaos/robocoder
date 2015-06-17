@@ -15,12 +15,12 @@ public abstract class AbstractLevel extends TestbedTest {
     public void initLevel(boolean deserialized) {
         setTitle(getLevelName());
         getWorld().setGravity(new Vec2());
-        game = createGame();
+        game = new Game(getWorld(), getDebugDraw());
+        initLevel(game);
         game.start();
     }
 
-    abstract public Game createGame();
-
+    abstract public void initLevel(Game game);
 
     @Override
     public synchronized void step() {

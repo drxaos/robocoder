@@ -5,7 +5,7 @@ import com.github.drxaos.robocoder.program.api.ArmDriver;
 import com.github.drxaos.robocoder.program.api.BasicMovement;
 import com.github.drxaos.robocoder.program.api.ChassisDriver;
 import com.github.drxaos.robocoder.program.api.RadarDriver;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 
 public class JointsProgram extends AbstractProgram {

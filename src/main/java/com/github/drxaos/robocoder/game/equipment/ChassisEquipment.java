@@ -3,7 +3,7 @@ package com.github.drxaos.robocoder.game.equipment;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.actors.Robot;
 import org.jbox2d.common.Vec2;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.HashMap;
 import java.util.Map;

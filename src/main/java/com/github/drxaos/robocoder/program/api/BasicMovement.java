@@ -1,7 +1,7 @@
 package com.github.drxaos.robocoder.program.api;
 
 import com.github.drxaos.robocoder.program.Bus;
-import straightedge.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.awt.geom.Point2D;
 
