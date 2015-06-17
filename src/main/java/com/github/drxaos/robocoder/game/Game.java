@@ -1,19 +1,20 @@
 package com.github.drxaos.robocoder.game;
 
 import com.github.drxaos.robocoder.game.actors.Actor;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.callbacks.RayCastCallback;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import straightedge.geom.KPoint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
@@ -27,6 +28,7 @@ public class Game {
 
     public Game(World world, DebugDraw debugDraw) {
         this.world = world;
+        this.world.setContactListener(new Sensors());
         this.debugDraw = debugDraw;
     }
 
@@ -40,7 +42,8 @@ public class Game {
     }
 
     public void start() {
-        for (Actor actor : actors) {
+        for (int i = actors.size() - 1; i >= 0; i--) {
+            Actor actor = actors.get(i);
             actor.getModel().makeBody(world, actor);
         }
         for (Actor actor : actors) {
@@ -73,10 +76,10 @@ public class Game {
     }
 
     public static class Trace {
-        public static final int MAX_TTL = 20;
         public KPoint[] points;
         public Float radius;
         public Color3f color3f;
+        public int startTtl = 20;
         public int ttl = 20;
 
         public Trace(KPoint[] points, Color3f color3f) {
@@ -84,15 +87,40 @@ public class Game {
             this.color3f = color3f;
         }
 
+        public Trace(KPoint[] points, Color3f color3f, int ttl) {
+            this.points = points;
+            this.color3f = color3f;
+            this.ttl = this.startTtl = ttl;
+        }
+
         public Trace(KPoint point, Float radius, Color3f color3f) {
             this.points = new KPoint[]{point};
             this.radius = radius;
             this.color3f = color3f;
         }
+
+        public Trace(KPoint point, Float radius, Color3f color3f, int ttl) {
+            this.points = new KPoint[]{point};
+            this.radius = radius;
+            this.color3f = color3f;
+            this.ttl = this.startTtl = ttl;
+        }
     }
 
     public void addTrace(KPoint[] points, Color3f color3f) {
         traces.add(new Trace(points, color3f));
+    }
+
+    public void addTrace(KPoint[] points, Color3f color3f, int ttl) {
+        traces.add(new Trace(points, color3f, ttl));
+    }
+
+    public void addTrace(KPoint point, Float radius, Color3f color3f) {
+        traces.add(new Trace(point, radius, color3f));
+    }
+
+    public void addTrace(KPoint point, Float radius, Color3f color3f, int ttl) {
+        traces.add(new Trace(point, radius, color3f, ttl));
     }
 
     private static class RayCastClosestCallback implements RayCastCallback {
@@ -165,5 +193,46 @@ public class Game {
 
     public Long getTime() {
         return time;
+    }
+
+    public static class Sensors implements ContactListener {
+
+        public void beginContact(Contact contact) {
+            Fixture fixtureA = contact.getFixtureA();
+            Fixture fixtureB = contact.getFixtureB();
+
+            Actor actorA = (Actor) ((Map) fixtureA.getBody().getUserData()).get("actor");
+            Actor actorB = (Actor) ((Map) fixtureB.getBody().getUserData()).get("actor");
+
+            if (actorA.isSensor()) {
+                ((Set<Actor>) ((Map) fixtureA.getBody().getUserData()).get("contacts")).add(actorB);
+            }
+            if (actorB.isSensor()) {
+                ((Set<Actor>) ((Map) fixtureB.getBody().getUserData()).get("contacts")).add(actorA);
+            }
+        }
+
+        public void endContact(Contact contact) {
+            Fixture fixtureA = contact.getFixtureA();
+            Fixture fixtureB = contact.getFixtureB();
+
+            Actor actorA = (Actor) ((Map) fixtureA.getBody().getUserData()).get("actor");
+            Actor actorB = (Actor) ((Map) fixtureB.getBody().getUserData()).get("actor");
+
+            if (actorA.isSensor()) {
+                ((Set<Actor>) ((Map) fixtureA.getBody().getUserData()).get("contacts")).remove(actorB);
+            }
+            if (actorB.isSensor()) {
+                ((Set<Actor>) ((Map) fixtureB.getBody().getUserData()).get("contacts")).remove(actorA);
+            }
+        }
+
+        public void preSolve(Contact contact, Manifold oldManifold) {
+
+        }
+
+        public void postSolve(Contact contact, ContactImpulse impulse) {
+
+        }
     }
 }

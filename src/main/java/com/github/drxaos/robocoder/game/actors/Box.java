@@ -24,7 +24,7 @@ public class Box extends Actor {
     }
 
     @Override
-    public String[] getRadarProperties() {
+    public String[] getTags() {
         return new String[]{"box", "dynamic", "breakable"};
     }
 

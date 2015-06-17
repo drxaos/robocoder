@@ -26,6 +26,8 @@ public class Robot extends Actor {
     protected Bus bus = new Bus();
     protected boolean active = true;
 
+    public Color3f color = new Color3f(0.9f, 0.7f, 0.7f);
+
     public Robot(String uid, double x, double y, double angle) {
         this.uid = uid;
         model = new RobotModel(new KPoint(x, y), angle);
@@ -193,7 +195,16 @@ public class Robot extends Actor {
     }
 
     @Override
-    public String[] getRadarProperties() {
+    public String[] getTags() {
         return new String[]{"robot", "dynamic", "breakable", uid};
+    }
+
+    @Override
+    public Color3f getColor() {
+        return color;
+    }
+
+    public void setColor(Color3f color) {
+        this.color = color;
     }
 }

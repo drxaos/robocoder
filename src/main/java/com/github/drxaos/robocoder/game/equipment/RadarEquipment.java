@@ -73,7 +73,7 @@ public class RadarEquipment implements Equipment {
             Game.ScanResult scanResult = game.resolveDirection(scanAngle, scanDistance, robot, scanSensors);
             if (scanResult != null) {
                 robot.getBus().writeResponse(scanResult.distance + "::" +
-                        StringUtils.join(Arrays.asList(scanResult.actor.getRadarProperties()), "::"));
+                        StringUtils.join(Arrays.asList(scanResult.actor.getTags()), "::"));
                 game.addTrace(new KPoint[]{robot.getModel().getPosition(), scanResult.point}, new Color3f(.5f, .9f, .5f));
             } else {
                 robot.getBus().writeResponse(scanDistance + "::" + "empty");

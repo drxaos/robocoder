@@ -78,7 +78,7 @@ public class BasicMovement {
     }
 
     public boolean move(double x, double y) {
-        return move(new KPoint(x, y), 0.2d, 100000);
+        return move(new KPoint(x, y), 0.5d, 100000);
     }
 
     public boolean move(KPoint to, double accuracy, int timeout) {

@@ -37,7 +37,7 @@ public class Wall extends Actor {
     }
 
     @Override
-    public String[] getRadarProperties() {
+    public String[] getTags() {
         return new String[]{"wall", "static", "unbreakable"};
     }
 }
