@@ -3,6 +3,7 @@ package com.github.drxaos.robocoder.levels.tutorial;
 import com.github.drxaos.robocoder.game.AbstractLevel;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.Runner;
+import com.github.drxaos.robocoder.game.actors.FinishPad;
 import com.github.drxaos.robocoder.game.actors.Robot;
 import com.github.drxaos.robocoder.game.actors.StartPad;
 import com.github.drxaos.robocoder.game.actors.TriggerPad;
@@ -21,13 +22,17 @@ public class Tutorial01Chassis extends AbstractLevel {
     }
 
     StartPad startPad;
+    FinishPad finishPad;
     TriggerPad[] pads;
     Robot robot;
 
     @Override
     public void initLevel(Game game) {
-        startPad = new StartPad(new KPoint(0, 0), 0d);
+        startPad = new StartPad(new KPoint(-10, 30), 0d);
         game.addActor(startPad);
+
+        finishPad = new FinishPad(new KPoint(0, 0), 0d);
+        game.addActor(finishPad);
 
         pads = new TriggerPad[]{
                 new TriggerPad(new KPoint(-15, 15), 2),
@@ -42,7 +47,7 @@ public class Tutorial01Chassis extends AbstractLevel {
             game.addTrace(trace);
         }
 
-        robot = new Robot("RC-1", 0, 0, Math.PI / 2);
+        robot = new Robot("RC-1", -10, 30, Math.PI / 2);
         robot.addEquipment(new ChassisEquipment(100d));
         robot.addEquipment(new RadarEquipment());
         robot.addEquipment(new ArmEquipment());
@@ -72,7 +77,7 @@ public class Tutorial01Chassis extends AbstractLevel {
     }
 
     private void checkSuccess() {
-        if (!startPad.getContacts().contains(robot)) {
+        if (!finishPad.getContacts().contains(robot)) {
             successTimer = 0;
             return;
         }
