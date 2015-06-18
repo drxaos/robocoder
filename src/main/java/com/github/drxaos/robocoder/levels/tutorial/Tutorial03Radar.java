@@ -51,10 +51,7 @@ public class Tutorial03Radar extends AbstractLevel {
                         startPad = new StartPad(new KPoint(x * 4, y * 4), 0d);
                         game.addActor(startPad);
                         robot = new Robot("RC-1", x * 4, y * 4, 0);
-                        robot.addEquipment(new ChassisEquipment(100d));
-                        robot.addEquipment(new RadarEquipment());
-                        robot.addEquipment(new ArmEquipment());
-                        robot.addEquipment(new TurretEquipment());
+                        robot.addDefaultEquipment();
                         robot.setProgram(userProgram);
                         robot.enableLogging();
                         break;

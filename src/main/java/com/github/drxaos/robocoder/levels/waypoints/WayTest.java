@@ -35,8 +35,7 @@ public class WayTest extends AbstractLevel {
         game.addActor(new Wall(points, 0));
 
         Robot robot = new Robot("RC-1", 0, -10, Math.PI * 4 * Math.random());
-        robot.addEquipment(new ChassisEquipment(100d));
-        robot.addEquipment(new RadarEquipment());
+        robot.addDefaultEquipment();
         robot.setProgram(userProgram);
         robot.enableLogging();
         game.addActor(robot);
@@ -49,8 +48,7 @@ public class WayTest extends AbstractLevel {
         super.step();
         if (game.getTime() % 750 == 0 && game.getTime() < 2000) {
             Robot robot = new Robot("RC-" + n++, 0, -10, Math.PI * 4 * Math.random());
-            robot.addEquipment(new ChassisEquipment(100d));
-            robot.addEquipment(new RadarEquipment());
+            robot.addDefaultEquipment();
             robot.setProgram(userProgram);
             robot.enableLogging();
             game.addActor(robot);

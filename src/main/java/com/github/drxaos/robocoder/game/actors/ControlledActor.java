@@ -43,6 +43,8 @@ public abstract class ControlledActor extends Actor {
         this.equipment.add(equipment);
     }
 
+    public abstract void addDefaultEquipment();
+
     @Override
     public void start() {
         program.setBus(bus);

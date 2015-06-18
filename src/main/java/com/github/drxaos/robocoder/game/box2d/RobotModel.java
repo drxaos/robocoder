@@ -60,19 +60,37 @@ public class RobotModel extends AbstractModel {
         return (double) body.getAngle() + Math.PI / 2;
     }
 
-
     public void tie(AbstractModel towable, boolean back) {
         if (body == null || joint != null) {
             return;
         }
+
         RopeJointDef jointDef = new RopeJointDef();
         jointDef.bodyA = body;
         jointDef.bodyB = towable.body;
         jointDef.localAnchorA.set(0.0f, (float) SIZE * (back ? -1 : 1));
         jointDef.localAnchorB.set(towable.getTiePoint());
-        jointDef.maxLength = .01f;
+        jointDef.maxLength = .05f;
         jointDef.collideConnected = true;
+
+        float l2 = towable.getTiePoint().length();
+        float a1 = (float) getAngle();
+        Vec2 p1 = body.getPosition();
+        Vec2 p2 = towable.body.getPosition();
+        Vec2 p2n = new Vec2((float) (p1.x + Math.cos(a1) * (SIZE + l2)), (float) (p1.y + Math.sin(a1) * (SIZE + l2)));
+        Vec2 anchor1 = body.getWorldPoint(jointDef.localAnchorA);
+        Vec2 anchor2 = towable.body.getWorldPoint(jointDef.localAnchorB);
+        double dx1 = anchor1.x - p2n.x;
+        double dy1 = anchor1.y - p2n.y;
+        double a2 = Math.atan2(dy1, dx1);
+        double dx2 = anchor2.x - p2.x;
+        double dy2 = anchor2.y - p2.y;
+        double a2a = Math.atan2(dy2, dx2); // todo check
+        towable.body.setTransform(p2, (float) (a2 - a2a));
+
         joint = (RopeJoint) world.createJoint(jointDef);
+
+
     }
 
     public void untie() {

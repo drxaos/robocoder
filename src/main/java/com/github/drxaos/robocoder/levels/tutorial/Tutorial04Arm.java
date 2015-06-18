@@ -3,34 +3,48 @@ package com.github.drxaos.robocoder.levels.tutorial;
 import com.github.drxaos.robocoder.game.AbstractLevel;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.Runner;
+import com.github.drxaos.robocoder.game.actors.Box;
+import com.github.drxaos.robocoder.game.actors.FinishPad;
 import com.github.drxaos.robocoder.game.actors.Robot;
 import com.github.drxaos.robocoder.game.actors.StartPad;
-import com.github.drxaos.robocoder.game.actors.TargetBuilding;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Tutorial02Turret extends AbstractLevel {
+public class Tutorial04Arm extends AbstractLevel {
     public static void run(Class<? extends AbstractProgram> program) {
-        Runner.run(Tutorial02Turret.class, program);
+        Runner.run(Tutorial04Arm.class, program);
     }
 
     StartPad startPad;
-    TargetBuilding[] targets = new TargetBuilding[8];
+    FinishPad finishPad;
     Robot robot;
+    List<Box> boxes = new ArrayList<Box>();
 
     @Override
     public void initLevel(Game game) {
-        startPad = new StartPad(new KPoint(0, 10), 0d);
+        drawInterval = 8;
+
+        startPad = new StartPad(new KPoint(-10, 10), 0d);
         game.addActor(startPad);
 
-        for (int i = 0; i < 8; i++) {
-            targets[i] = new TargetBuilding(new KPoint(0 + Math.cos(i * Math.PI / 4) * 15, 10 + Math.sin(i * Math.PI / 4) * 15), 1.5f);
-            game.addActor(targets[i]);
+        finishPad = new FinishPad(new KPoint(15, 10), 10, 10, 0d);
+        game.addActor(finishPad);
+
+        for (int s = -1; s <= 1; s += 2) {
+            for (int x = -1; x <= 1; x++) {
+                for (int y = -1; y <= 1; y++) {
+                    Box box = new Box(-10 + x * 3, 10 + s * 10 + y * 3, 0d);
+                    game.addActor(box);
+                    boxes.add(box);
+                }
+            }
         }
 
-        robot = new Robot("RC-1", 0, 10, Math.PI / 2);
+        robot = new Robot("RC-1", -10, 10, 0);
         robot.addDefaultEquipment();
         robot.setProgram(userProgram);
         robot.enableLogging();
@@ -49,12 +63,12 @@ public class Tutorial02Turret extends AbstractLevel {
     }
 
     private void checkSuccess() {
-        if (!startPad.getContacts().contains(robot)) {
+        if (!finishPad.getContacts().contains(robot)) {
             successTimer = 0;
             return;
         }
-        for (TargetBuilding target : targets) {
-            if (!target.isDestroyed()) {
+        for (Box box : boxes) {
+            if (!finishPad.getContacts().contains(box)) {
                 successTimer = 0;
                 return;
             }

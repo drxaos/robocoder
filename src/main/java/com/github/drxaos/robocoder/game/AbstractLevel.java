@@ -10,6 +10,7 @@ import javax.swing.*;
 public abstract class AbstractLevel extends TestbedTest {
     protected Game game;
     protected Class<? extends AbstractProgram> userProgram;
+    protected int drawInterval = 7;
 
     @Override
     public void initLevel(boolean deserialized) {
@@ -33,7 +34,7 @@ public abstract class AbstractLevel extends TestbedTest {
     @Override
     public void update() {
         if (drawer != null) {
-            drawer.setSkip(game.getTime() % 7 != 0);
+            drawer.setSkip(game.getTime() % drawInterval != 0);
         }
         super.update();
     }

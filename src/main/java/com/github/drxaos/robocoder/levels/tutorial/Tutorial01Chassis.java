@@ -48,9 +48,7 @@ public class Tutorial01Chassis extends AbstractLevel {
         }
 
         robot = new Robot("RC-1", -10, 30, Math.PI / 2);
-        robot.addEquipment(new ChassisEquipment(100d));
-        robot.addEquipment(new RadarEquipment());
-        robot.addEquipment(new ArmEquipment());
+        robot.addDefaultEquipment();
         robot.setProgram(userProgram);
         robot.enableLogging();
         game.addActor(robot);

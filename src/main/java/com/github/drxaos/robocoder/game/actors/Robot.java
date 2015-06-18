@@ -2,6 +2,10 @@ package com.github.drxaos.robocoder.game.actors;
 
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.box2d.RobotModel;
+import com.github.drxaos.robocoder.game.equipment.ArmEquipment;
+import com.github.drxaos.robocoder.game.equipment.ChassisEquipment;
+import com.github.drxaos.robocoder.game.equipment.RadarEquipment;
+import com.github.drxaos.robocoder.game.equipment.TurretEquipment;
 import com.github.drxaos.robocoder.geom.KPoint;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
@@ -31,6 +35,13 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
     @Override
     public RobotModel getModel() {
         return model;
+    }
+
+    public void addDefaultEquipment() {
+        addEquipment(new ChassisEquipment());
+        addEquipment(new RadarEquipment());
+        addEquipment(new ArmEquipment());
+        addEquipment(new TurretEquipment());
     }
 
     public boolean tie(boolean back) {

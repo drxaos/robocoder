@@ -15,9 +15,7 @@ public class JointsTest extends AbstractLevel {
     @Override
     public void initLevel(Game game) {
         robot = new Robot("RC-1", 0, -10, -Math.PI / 2);
-        robot.addEquipment(new ChassisEquipment(100d));
-        robot.addEquipment(new RadarEquipment());
-        robot.addEquipment(new ArmEquipment());
+        robot.addDefaultEquipment();
         robot.setProgram(userProgram);
         robot.enableLogging();
         game.addActor(robot);

@@ -14,8 +14,8 @@ public class ChassisEquipment implements Equipment {
     private Map<KPoint, Vec2> effectsMap;
     private final Vec2 LEFT_ENGINE, RIGHT_ENGINE;
 
-    public ChassisEquipment(double maxAccel) {
-        this.maxAccel = maxAccel;
+    public ChassisEquipment() {
+        this.maxAccel = 100;
 
         LEFT_ENGINE = new Vec2(0, 0);
         RIGHT_ENGINE = new Vec2(0, 0);
