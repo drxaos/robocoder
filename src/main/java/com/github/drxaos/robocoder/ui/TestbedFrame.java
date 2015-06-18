@@ -50,7 +50,7 @@ public class TestbedFrame extends JFrame {
         model = argModel;
         model.setDebugDraw(argPanel.getDebugDraw());
         controller = new TestbedController(model, argPanel, behavior);
-        controller.setFrameRate(200);
+        controller.setFrameRate(100);
 
         add((Component) argPanel, "Center");
         pack();

@@ -23,6 +23,7 @@
  ******************************************************************************/
 package com.github.drxaos.robocoder.ui;
 
+import com.github.drxaos.robocoder.ui.j2d.DebugDrawJ2D;
 import org.jbox2d.common.Vec2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,15 +322,16 @@ public class TestbedController implements Runnable {
 
             afterTime = System.nanoTime();
 
-            timeDiff = afterTime - beforeTime;
-            sleepTime = (1000000000 / targetFrameRate - timeDiff) / 1000000;
-            if (sleepTime > 0) {
-                try {
-                    Thread.sleep(sleepTime);
-                } catch (InterruptedException ex) {
+            if (!((DebugDrawJ2D) model.getDebugDraw()).isSkip()) {
+                timeDiff = afterTime - beforeTime;
+                sleepTime = (1000000000 / targetFrameRate - timeDiff) / 1000000;
+                if (sleepTime > 0) {
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException ex) {
+                    }
                 }
             }
-
             beforeTime = System.nanoTime();
         } // end of run loop
     }

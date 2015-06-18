@@ -36,7 +36,7 @@ public class RadarProgram extends AbstractProgram {
             sx = sx / points;
             sy = sy / points;
             KPoint target = radarDriver.getPosition().translateCopy(sx, sy);
-            if (Math.abs(target.getX()) < 1 && Math.abs(target.getX()) < 1) {
+            if (Math.abs(target.getX()) < 1 && Math.abs(target.getY()) < 1) {
                 continue;
             }
 

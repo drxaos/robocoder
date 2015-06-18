@@ -33,7 +33,7 @@ public abstract class AbstractLevel extends TestbedTest {
     @Override
     public void update() {
         if (drawer != null) {
-            drawer.setSkip(game.getTime() % 3 != 0);
+            drawer.setSkip(game.getTime() % 7 != 0);
         }
         super.update();
     }
