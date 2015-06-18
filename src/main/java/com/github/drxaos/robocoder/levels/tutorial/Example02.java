@@ -17,7 +17,7 @@ public class Example02 extends AbstractProgram {
         ArmDriver armDriver = new ArmDriver(bus);
         TurretDriver turretDriver = new TurretDriver(bus);
 
-        while (true) {
+        for (int i = 0; i < 8; i++) {
             basicMovement.rotate(radarDriver.getAngle() + Math.PI / 4, false, 10000);
             turretDriver.fire();
         }

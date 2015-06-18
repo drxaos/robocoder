@@ -46,7 +46,6 @@ public class Tutorial02Turret extends AbstractLevel {
 
     long successTimer = 0;
     boolean success = false;
-    boolean gone = false;
 
     @Override
     public synchronized void step() {
@@ -59,7 +58,6 @@ public class Tutorial02Turret extends AbstractLevel {
     private void checkSuccess() {
         if (!startPad.getContacts().contains(robot)) {
             successTimer = 0;
-            gone = true;
             return;
         }
         for (TargetBuilding target : targets) {
@@ -70,11 +68,7 @@ public class Tutorial02Turret extends AbstractLevel {
         }
         if (++successTimer > 100) {
             success = true;
-            if (gone) {
-                JOptionPane.showMessageDialog(null, "You left the StartPad", "Fail!", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(null, "Level completed!", "Success!", JOptionPane.INFORMATION_MESSAGE);
-            }
+            JOptionPane.showMessageDialog(null, "Level completed!", "Success!", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }
