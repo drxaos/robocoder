@@ -1,12 +1,13 @@
 package com.github.drxaos.robocoder.game.box2d;
 
+import com.github.drxaos.robocoder.geom.KPoint;
+import com.github.drxaos.robocoder.geom.KPolygon;
+import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
-import com.github.drxaos.robocoder.geom.KPoint;
-import com.github.drxaos.robocoder.geom.KPolygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,43 @@ public class StaticModel extends AbstractModel {
 
             fixtureDefs.add(fixtureDef);
         }
+
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyType.STATIC;
+        bodyDef.position.set((float) position.getX(), (float) position.getY());
+        bodyDef.angle = (float) angle;
+        bodyDef.allowSleep = true;
+    }
+
+
+    public StaticModel(KPoint position, float width, float height, double angle) {
+
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(width, height);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.friction = 0.8f;
+
+        fixtureDefs.add(fixtureDef);
+
+        bodyDef = new BodyDef();
+        bodyDef.type = BodyType.STATIC;
+        bodyDef.position.set((float) position.getX(), (float) position.getY());
+        bodyDef.angle = (float) angle;
+        bodyDef.allowSleep = true;
+    }
+
+    public StaticModel(KPoint position, float radius, double angle) {
+
+        CircleShape shape = new CircleShape();
+        shape.setRadius(radius);
+
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.friction = 0.8f;
+
+        fixtureDefs.add(fixtureDef);
 
         bodyDef = new BodyDef();
         bodyDef.type = BodyType.STATIC;

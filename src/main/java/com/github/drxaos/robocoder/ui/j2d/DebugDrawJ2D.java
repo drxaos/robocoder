@@ -34,6 +34,10 @@
  * Created at 3:09:27 AM Jul 17, 2010
  * <p/>
  * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
  */
 /**
  * Created at 3:09:27 AM Jul 17, 2010
@@ -80,24 +84,24 @@ public class DebugDrawJ2D extends DebugDraw {
         drawPolygon(vecs, circlePoints, color);
     }
 
-    public void drawCircle(Vec2 center, float radius, Color3f color, float alpha) {
+    public void drawCircle(Vec2 center, float radius, Color3f color, float width, float alpha) {
         Vec2[] vecs = vec2Array.get(circlePoints);
         generateCirle(center, radius, vecs, circlePoints);
-        drawPolygon(vecs, circlePoints, color, alpha);
+        drawPolygon(vecs, circlePoints, color, width, alpha);
     }
 
-    public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color, float alpha) {
+    public void drawPolygon(Vec2[] vertices, int vertexCount, Color3f color, float width, float alpha) {
         if (vertexCount == 1) {
-            drawSegment(vertices[0], vertices[0], color, 1, alpha);
+            drawSegment(vertices[0], vertices[0], color, width, alpha);
             return;
         }
 
         for (int i = 0; i < vertexCount - 1; i += 1) {
-            drawSegment(vertices[i], vertices[i + 1], color, 1, alpha);
+            drawSegment(vertices[i], vertices[i + 1], color, width, alpha);
         }
 
         if (vertexCount > 2) {
-            drawSegment(vertices[vertexCount - 1], vertices[0], color, 1, alpha);
+            drawSegment(vertices[vertexCount - 1], vertices[0], color, width, alpha);
         }
     }
 
@@ -145,7 +149,7 @@ public class DebugDrawJ2D extends DebugDraw {
         g.setColor(c);
 
         Stroke stroke = g.getStroke();
-        g.setStroke(new BasicStroke(sp6.x - sp4.x));
+        g.setStroke(new BasicStroke(sp6.x - sp4.x, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER));
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
         g.setStroke(stroke);
     }

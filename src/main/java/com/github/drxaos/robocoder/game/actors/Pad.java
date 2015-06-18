@@ -14,8 +14,8 @@ public class Pad extends Actor {
 
     public static final Color3f defaultColor = new Color3f(.5f, .5f, .9f);
 
-    SensorModel model;
-    ArrayList<KPoint> vertices;
+    protected SensorModel model;
+    protected ArrayList<KPoint> vertices;
 
     public Pad(List<KPoint> vertices, KPoint position, double angle) {
         this.vertices = new ArrayList<KPoint>();

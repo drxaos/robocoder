@@ -13,8 +13,8 @@ import java.util.List;
 
 public class Wall extends Actor {
 
-    StaticModel model;
-    List<Point2D> vertices;
+    protected StaticModel model;
+    protected List<Point2D> vertices;
 
     public Wall(List<Point2D> vertices, double angle) {
         this.vertices = Collections.unmodifiableList(vertices);

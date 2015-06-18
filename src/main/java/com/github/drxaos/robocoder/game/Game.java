@@ -1,6 +1,7 @@
 package com.github.drxaos.robocoder.game;
 
 import com.github.drxaos.robocoder.game.actors.Actor;
+import com.github.drxaos.robocoder.geom.KPoint;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.callbacks.DebugDraw;
@@ -12,7 +13,6 @@ import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
-import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +21,7 @@ import java.util.Map;
 
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
+    protected List<Actor> destroy = new ArrayList<Actor>();
     protected List<Trace> traces = new ArrayList<Trace>();
 
     protected World world;
@@ -42,6 +43,10 @@ public class Game {
             actor.getModel().makeBody(world, actor);
             actor.start();
         }
+    }
+
+    public void removeActor(Actor actor) {
+        destroy.add(actor);
     }
 
     public void start() {
@@ -66,6 +71,14 @@ public class Game {
         for (Actor actor : actors) {
             actor.afterStep();
         }
+        for (Actor actor : destroy) {
+            actors.remove(actor);
+            actor.setGame(null);
+            if (started) {
+                world.destroyBody(actor.getModel().body);
+                actor.stop();
+            }
+        }
     }
 
     public List<Actor> resolvePoint(double x, double y) {
@@ -85,6 +98,9 @@ public class Game {
         public int startTtl = 20;
         public int ttl = 20;
         public float width = .2f;
+
+        public Trace() {
+        }
 
         public Trace(KPoint[] points, Color3f color3f) {
             this.points = points;
@@ -109,6 +125,20 @@ public class Game {
             this.color3f = color3f;
             this.ttl = this.startTtl = ttl;
         }
+
+        public Trace copy() {
+            Trace clone = new Trace();
+            clone.startTtl = startTtl;
+            clone.ttl = ttl;
+            clone.points = new KPoint[points.length];
+            for (int i = 0; i < points.length; i++) {
+                clone.points[i] = new KPoint(points[i]);
+            }
+            clone.radius = radius;
+            clone.color3f = color3f;
+            clone.width = width;
+            return clone;
+        }
     }
 
     public void addTrace(KPoint[] points, Color3f color3f) {
@@ -125,6 +155,10 @@ public class Game {
 
     public void addTrace(KPoint point, Float radius, Color3f color3f, int ttl) {
         traces.add(new Trace(point, radius, color3f, ttl));
+    }
+
+    public void addTrace(Trace trace) {
+        traces.add(trace);
     }
 
     private static class RayCastClosestCallback implements RayCastCallback {
@@ -208,12 +242,8 @@ public class Game {
             Actor actorA = (Actor) ((Map) fixtureA.getBody().getUserData()).get("actor");
             Actor actorB = (Actor) ((Map) fixtureB.getBody().getUserData()).get("actor");
 
-            if (actorA.isSensor()) {
-                actorA.beginContact(actorB);
-            }
-            if (actorB.isSensor()) {
-                actorB.beginContact(actorA);
-            }
+            actorA.beginContact(actorB);
+            actorB.beginContact(actorA);
         }
 
         public void endContact(Contact contact) {
@@ -223,12 +253,8 @@ public class Game {
             Actor actorA = (Actor) ((Map) fixtureA.getBody().getUserData()).get("actor");
             Actor actorB = (Actor) ((Map) fixtureB.getBody().getUserData()).get("actor");
 
-            if (actorA.isSensor()) {
-                actorA.endContact(actorB);
-            }
-            if (actorB.isSensor()) {
-                actorB.endContact(actorA);
-            }
+            actorA.endContact(actorB);
+            actorB.endContact(actorA);
         }
 
         public void preSolve(Contact contact, Manifold oldManifold) {

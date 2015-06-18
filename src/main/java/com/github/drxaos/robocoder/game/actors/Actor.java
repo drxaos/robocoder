@@ -11,10 +11,15 @@ import java.util.Set;
 
 public abstract class Actor {
     protected Game game;
+    protected float shield = 5f;
+    protected float damage = 0f;
 
     public abstract AbstractModel getModel();
 
     public void start() {
+    }
+
+    public void stop() {
     }
 
     public void beforeStep() {
@@ -52,10 +57,7 @@ public abstract class Actor {
     }
 
     public Set<Actor> getContacts() {
-        if (!isSensor()) {
-            return null;
-        }
-        return Collections.unmodifiableSet(contacts);
+        return Collections.unmodifiableSet(new HashSet<Actor>(contacts));
     }
 
     public void beginContact(Actor actor) {
@@ -64,5 +66,64 @@ public abstract class Actor {
 
     public void endContact(Actor actor) {
         contacts.remove(actor);
+    }
+
+    public float getShield() {
+        return shield;
+    }
+
+    public void setShield(float shield) {
+        if (shield < 0) {
+            this.shield = 0;
+        } else {
+            this.shield = shield;
+        }
+        this.damage = 0;
+    }
+
+    public float getDamage() {
+        return damage;
+    }
+
+    public float getArmour() {
+        return shield - damage;
+    }
+
+    public int getArmourPercent() {
+        return Math.round(getArmour() / shield * 100);
+    }
+
+    public void setDamage(float damage) {
+        if (damage < 0) {
+            this.damage = 0;
+        } else if (damage > shield) {
+            this.damage = shield;
+        } else {
+            this.damage = damage;
+        }
+    }
+
+    public void damage(float points) {
+        if (points < 0) {
+            return;
+        }
+        this.damage += points;
+        if (damage < 0) {
+            damage = 0;
+        } else if (damage > shield) {
+            damage = shield;
+        }
+    }
+
+    public void repair(float points) {
+        if (points < 0) {
+            return;
+        }
+        this.damage -= points;
+        if (damage < 0) {
+            damage = 0;
+        } else if (damage > shield) {
+            damage = shield;
+        }
     }
 }

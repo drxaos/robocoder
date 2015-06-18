@@ -3,11 +3,11 @@ package com.github.drxaos.robocoder.game.actors;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.box2d.RobotModel;
 import com.github.drxaos.robocoder.game.equipment.Equipment;
+import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.Bus;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
-import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +16,18 @@ public class Robot extends Actor {
 
     public static final float ARM_DISTANCE = 2;
 
-    List<Equipment> equipment = new ArrayList<Equipment>();
-    RobotModel model;
-    String uid;
-    boolean logging = false;
+    protected List<Equipment> equipment = new ArrayList<Equipment>();
+    protected RobotModel model;
+    protected String uid;
+    protected boolean logging = false;
 
     protected AbstractProgram program;
     protected Thread userProgramThread;
     protected Bus bus = new Bus();
     protected boolean active = true;
 
-    public Color3f color = new Color3f(0.9f, 0.7f, 0.7f);
+    protected final Color3f destroyedColor = new Color3f(0.3f, 0.3f, 0.3f);
+    protected Color3f color = new Color3f(0.9f, 0.7f, 0.7f);
 
     public Robot(String uid, double x, double y, double angle) {
         this.uid = uid;
@@ -86,6 +87,15 @@ public class Robot extends Actor {
             }
         });
         userProgramThread.start();
+    }
+
+    @Override
+    public void stop() {
+        try {
+            userProgramThread.stop();
+        } catch (RuntimeException e) {
+            // nothing
+        }
     }
 
     public void setProgram(final Class<? extends AbstractProgram> program) {
@@ -201,10 +211,22 @@ public class Robot extends Actor {
 
     @Override
     public Color3f getColor() {
-        return color;
+        if (model.body.isActive()) {
+            return color;
+        } else {
+            return destroyedColor;
+        }
     }
 
     public void setColor(Color3f color) {
         this.color = color;
+    }
+
+    @Override
+    public void damage(float points) {
+        super.damage(points);
+        if (getArmour() == 0) {
+            model.body.setActive(false);
+        }
     }
 }

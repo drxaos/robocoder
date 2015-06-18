@@ -79,41 +79,43 @@ public class TestbedDrawer {
 
         for (Body b = m_bodyList; b != null; b = b.getNext()) {
             xf.set(b.getTransform());
-            for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
-                Color3f userColor = getUserColor(b);
-                if (!b.isActive()) {
-                    if (userColor != null) {
-                        color.set(userColor);
+            for (int i = 3; i >= 0; i--) {
+                for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
+                    if (i == 0) {
+                        Color3f userColor = getUserColor(b);
+                        if (!b.isActive()) {
+                            if (userColor != null) {
+                                color.set(userColor);
+                            } else {
+                                color.set(0.5f, 0.5f, 0.3f);
+                            }
+                        } else if (b.getType() == BodyType.STATIC) {
+                            if (userColor != null) {
+                                color.set(userColor);
+                            } else {
+                                color.set(0.5f, 0.9f, 0.3f);
+                            }
+                        } else if (b.getType() == BodyType.KINEMATIC) {
+                            if (userColor != null) {
+                                color.set(userColor);
+                            } else {
+                                color.set(0.5f, 0.5f, 0.9f);
+                            }
+                        } else if (!b.isAwake()) {
+                            if (userColor != null) {
+                                color.set(userColor);
+                            } else {
+                                color.set(0.5f, 0.5f, 0.5f);
+                            }
+                        } else {
+                            if (userColor != null) {
+                                color.set(userColor);
+                            } else {
+                                color.set(0.9f, 0.7f, 0.7f);
+                            }
+                        }
                     } else {
-                        color.set(0.5f, 0.5f, 0.3f);
-                    }
-                    drawShape(f, xf, color);
-                } else if (b.getType() == BodyType.STATIC) {
-                    if (userColor != null) {
-                        color.set(userColor);
-                    } else {
-                        color.set(0.5f, 0.9f, 0.3f);
-                    }
-                    drawShape(f, xf, color);
-                } else if (b.getType() == BodyType.KINEMATIC) {
-                    if (userColor != null) {
-                        color.set(userColor);
-                    } else {
-                        color.set(0.5f, 0.5f, 0.9f);
-                    }
-                    drawShape(f, xf, color);
-                } else if (!b.isAwake()) {
-                    if (userColor != null) {
-                        color.set(userColor);
-                    } else {
-                        color.set(0.5f, 0.5f, 0.5f);
-                    }
-                    drawShape(f, xf, color);
-                } else {
-                    if (userColor != null) {
-                        color.set(userColor);
-                    } else {
-                        color.set(0.9f, 0.7f, 0.7f);
+                        color.set(0, 0, 0);
                     }
                     drawShape(f, xf, color);
                 }
@@ -138,13 +140,13 @@ public class TestbedDrawer {
                 ((DebugDrawJ2D) m_debugDraw).drawCircle(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
                         trace.radius,
-                        trace.color3f, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
                 );
             } else if (trace.points.length == 1) {
                 ((DebugDrawJ2D) m_debugDraw).drawCircle(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
                         .2f,
-                        trace.color3f, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
                 );
             } else {
                 Vec2[] vec2s = new Vec2[trace.points.length];
@@ -153,7 +155,7 @@ public class TestbedDrawer {
                 }
                 ((DebugDrawJ2D) m_debugDraw).drawPolygon(
                         vec2s, vec2s.length,
-                        trace.color3f, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
                 );
             }
 
