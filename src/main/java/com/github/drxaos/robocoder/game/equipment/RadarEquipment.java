@@ -1,10 +1,10 @@
 package com.github.drxaos.robocoder.game.equipment;
 
 import com.github.drxaos.robocoder.game.Game;
-import com.github.drxaos.robocoder.game.actors.Robot;
+import com.github.drxaos.robocoder.game.actors.ControlledActor;
+import com.github.drxaos.robocoder.geom.KPoint;
 import com.sun.deploy.util.StringUtils;
 import org.jbox2d.common.Color3f;
-import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.Arrays;
 
@@ -22,15 +22,15 @@ public class RadarEquipment implements Equipment {
         this.scanDistance = scanDistance;
     }
 
-    public Double getAngle(Robot robot, Game game) {
+    public Double getAngle(ControlledActor robot, Game game) {
         return robot.getModel().getAngle();
     }
 
-    public KPoint getPosition(Robot robot, Game game) {
+    public KPoint getPosition(ControlledActor robot, Game game) {
         return robot.getModel().getPosition();
     }
 
-    public void communicate(Robot robot, Game game) {
+    public void communicate(ControlledActor robot, Game game) {
         String req = robot.getBus().getRequest();
         if (req == null || !req.startsWith(RADAR)) {
             return;
@@ -65,7 +65,7 @@ public class RadarEquipment implements Equipment {
     protected Double scanAngle;
     protected boolean scanSensors;
 
-    public void applyPhysics(Robot robot, Game game) {
+    public void applyPhysics(ControlledActor robot, Game game) {
         if (scanAngle != null) {
             if (scanAngle.isNaN()) {
                 scanAngle = 0d;

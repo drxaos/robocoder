@@ -2,35 +2,25 @@ package com.github.drxaos.robocoder.game.actors;
 
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.box2d.RobotModel;
-import com.github.drxaos.robocoder.game.equipment.Equipment;
 import com.github.drxaos.robocoder.geom.KPoint;
-import com.github.drxaos.robocoder.program.AbstractProgram;
-import com.github.drxaos.robocoder.program.Bus;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Robot extends Actor {
+public class Robot extends ControlledActor implements HasArm, HasTurret {
 
     public static final float ARM_DISTANCE = 2;
+    public static final float FIRE_DISTANCE = 30;
 
-    protected List<Equipment> equipment = new ArrayList<Equipment>();
     protected RobotModel model;
-    protected String uid;
-    protected boolean logging = false;
 
-    protected AbstractProgram program;
-    protected Thread userProgramThread;
-    protected Bus bus = new Bus();
+
     protected boolean active = true;
 
     protected final Color3f destroyedColor = new Color3f(0.3f, 0.3f, 0.3f);
     protected Color3f color = new Color3f(0.9f, 0.7f, 0.7f);
 
     public Robot(String uid, double x, double y, double angle) {
-        this.uid = uid;
+        super(uid);
         model = new RobotModel(new KPoint(x, y), angle);
     }
 
@@ -38,108 +28,9 @@ public class Robot extends Actor {
         return active;
     }
 
-    public void enableLogging() {
-        logging = true;
-    }
-
-    private void log(String msg) {
-        if (logging) {
-            System.out.println(uid + ": " + msg);
-        }
-    }
-
-    private void log(Throwable t) {
-        if (logging) {
-            t.printStackTrace();
-        }
-    }
-
-    public void addEquipment(Equipment equipment) {
-        this.equipment.add(equipment);
-    }
-
     @Override
     public RobotModel getModel() {
         return model;
-    }
-
-    @Override
-    public void start() {
-        program.setBus(bus);
-        this.userProgramThread = new Thread(new Runnable() {
-            public void run() {
-                program.run();
-                log("Program terminated");
-            }
-        }, "UserProgram: " + uid);
-        userProgramThread.setDaemon(true);
-        userProgramThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            public void uncaughtException(Thread t, Throwable e) {
-                log(e);
-                try {
-                    log("Trying to recover...");
-                    Thread.sleep(3000);
-                    setProgram(program.getClass());
-                    start();
-                } catch (InterruptedException e1) {
-                    log(e1);
-                }
-            }
-        });
-        userProgramThread.start();
-    }
-
-    @Override
-    public void stop() {
-        try {
-            userProgramThread.stop();
-        } catch (RuntimeException e) {
-            // nothing
-        }
-    }
-
-    public void setProgram(final Class<? extends AbstractProgram> program) {
-        try {
-            this.program = program.newInstance();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void beforeStep() {
-        for (Equipment eq : equipment) {
-            eq.applyPhysics(this, game);
-        }
-    }
-
-    protected long lastRequestId = 0;
-    protected long freezeDetector = 0;
-    protected final long FREEZE_TIMEOUT = 500;
-
-    @Override
-    public void afterStep() {
-        for (Equipment eq : equipment) {
-            eq.communicate(this, game);
-        }
-
-        // freeze detector
-        long requestId = bus.getRequestId();
-        if (lastRequestId == requestId && requestId != -1) {
-            freezeDetector++;
-        } else {
-            lastRequestId = requestId;
-            freezeDetector = 0;
-        }
-        if (freezeDetector > FREEZE_TIMEOUT) {
-            bus.writeResponse("unknown");
-        }
-    }
-
-    public Bus getBus() {
-        return bus;
     }
 
     public boolean tie(boolean back) {
@@ -227,6 +118,30 @@ public class Robot extends Actor {
         super.damage(points);
         if (getArmour() == 0) {
             model.body.setActive(false);
+        }
+    }
+
+    long fireDelay = 50;
+    long fireWait = 0;
+
+    public boolean fire() {
+        if (fireWait > 0) {
+            return false;
+        }
+        double angle = model.getAngle();
+        float dist = (float) (RobotModel.SIZE + RobotModel.TURRET_LEDGE + 1f);
+        game.addActor(new Bullet(
+                model.getPosition().translateCopy(Math.cos(angle) * dist, Math.sin(angle) * dist),
+                angle, Bullet.SPEED_NORMAL, Bullet.SIZE_LIGHT, FIRE_DISTANCE));
+        fireWait = fireDelay;
+        return true;
+    }
+
+    @Override
+    public void afterStep() {
+        super.afterStep();
+        if (fireWait > 0) {
+            fireWait--;
         }
     }
 }

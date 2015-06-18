@@ -1,7 +1,8 @@
 package com.github.drxaos.robocoder.game.equipment;
 
 import com.github.drxaos.robocoder.game.Game;
-import com.github.drxaos.robocoder.game.actors.Robot;
+import com.github.drxaos.robocoder.game.actors.ControlledActor;
+import com.github.drxaos.robocoder.game.actors.HasArm;
 
 public class ArmEquipment implements Equipment {
 
@@ -13,37 +14,40 @@ public class ArmEquipment implements Equipment {
 
     float strength = 2000;
 
-    public void communicate(Robot robot, Game game) {
-        String req = robot.getBus().getRequest();
+    public void communicate(ControlledActor actor, Game game) {
+        String req = actor.getBus().getRequest();
         if ("arm::tie::forward".equals(req)) {
             tieForward = true;
-            robot.getBus().writeResponse("arm::accepted");
+            actor.getBus().writeResponse("arm::accepted");
         } else if ("arm::tie::back".equals(req)) {
             tieBack = true;
-            robot.getBus().writeResponse("arm::accepted");
+            actor.getBus().writeResponse("arm::accepted");
         } else if ("arm::untie".equals(req)) {
             untie = true;
-            robot.getBus().writeResponse("arm::accepted");
+            actor.getBus().writeResponse("arm::accepted");
         } else if ("arm::push::forward".equals(req)) {
             pushForward = true;
-            robot.getBus().writeResponse("arm::accepted");
+            actor.getBus().writeResponse("arm::accepted");
         } else if ("arm::push::back".equals(req)) {
             pushBack = true;
-            robot.getBus().writeResponse("arm::accepted");
+            actor.getBus().writeResponse("arm::accepted");
         }
     }
 
-    public void applyPhysics(Robot robot, Game game) {
-        if (tieForward) {
-            robot.tie(false);
-        } else if (tieBack) {
-            robot.tie(true);
-        } else if (untie) {
-            robot.untie();
-        } else if (pushForward) {
-            robot.push(false, strength);
-        } else if (pushBack) {
-            robot.push(true, strength);
+    public void applyPhysics(ControlledActor actor, Game game) {
+        if (actor instanceof HasArm) {
+            HasArm actorWithArm = (HasArm) actor;
+            if (tieForward) {
+                actorWithArm.tie(false);
+            } else if (tieBack) {
+                actorWithArm.tie(true);
+            } else if (untie) {
+                actorWithArm.untie();
+            } else if (pushForward) {
+                actorWithArm.push(false, strength);
+            } else if (pushBack) {
+                actorWithArm.push(true, strength);
+            }
         }
         tieBack = false;
         tieForward = false;

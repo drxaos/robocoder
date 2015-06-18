@@ -1,9 +1,9 @@
 package com.github.drxaos.robocoder.game.equipment;
 
 import com.github.drxaos.robocoder.game.Game;
-import com.github.drxaos.robocoder.game.actors.Robot;
-import org.jbox2d.common.Vec2;
+import com.github.drxaos.robocoder.game.actors.ControlledActor;
 import com.github.drxaos.robocoder.geom.KPoint;
+import org.jbox2d.common.Vec2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class ChassisEquipment implements Equipment {
     public static final String LEFT = "left::";
     public static final String ACCEPTED = "accepted";
 
-    public void communicate(Robot robot, Game game) {
+    public void communicate(ControlledActor robot, Game game) {
         String req = robot.getBus().getRequest();
         if (req != null && req.startsWith(CHASSIS)) {
             if (req.startsWith(CHASSIS + LEFT)) {
@@ -68,7 +68,7 @@ public class ChassisEquipment implements Equipment {
         }
     }
 
-    public void applyPhysics(Robot robot, Game game) {
+    public void applyPhysics(ControlledActor robot, Game game) {
         LEFT_ENGINE.set(0, (float) leftAccel);
         RIGHT_ENGINE.set(0, (float) rightAccel);
         for (Map.Entry<KPoint, Vec2> entry : effectsMap.entrySet()) {

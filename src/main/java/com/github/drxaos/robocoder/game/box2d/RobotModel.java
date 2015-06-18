@@ -1,5 +1,6 @@
 package com.github.drxaos.robocoder.game.box2d;
 
+import com.github.drxaos.robocoder.geom.KPoint;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.BodyDef;
@@ -7,11 +8,11 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.FixtureDef;
 import org.jbox2d.dynamics.joints.RopeJoint;
 import org.jbox2d.dynamics.joints.RopeJointDef;
-import com.github.drxaos.robocoder.geom.KPoint;
 
 public class RobotModel extends AbstractModel {
 
     public static double SIZE = 1;
+    public static double TURRET_LEDGE = 0.2f;
     RopeJoint joint;
 
     public RobotModel(KPoint position, double angle) {
@@ -31,8 +32,8 @@ public class RobotModel extends AbstractModel {
             PolygonShape shape = new PolygonShape();
             shape.set(new Vec2[]{
                     new Vec2(-0.8f * (float) SIZE, 0),
-                    new Vec2(0, 1.2f * (float) SIZE),
-                    new Vec2(0.8f * (float) SIZE, 0),
+                    new Vec2(0, (float) (1f * SIZE + 1f * TURRET_LEDGE)),
+                    new Vec2(0.8f * (float) SIZE, 0)
             }, 3);
 
             FixtureDef fixtureDef = new FixtureDef();

@@ -15,6 +15,7 @@ public class Building extends Actor {
     protected StaticModel model;
     protected ArrayList<KPoint> vertices;
     protected Color3f color = new Color3f(0.9f, 0.7f, 0.7f);
+    protected final Color3f destroyedColor = new Color3f(0.3f, 0.3f, 0.3f);
 
     public Building(List<KPoint> vertices, KPoint position, double angle) {
         this.vertices = new ArrayList<KPoint>();
@@ -41,8 +42,20 @@ public class Building extends Actor {
     }
 
     @Override
+    public void damage(float points) {
+        super.damage(points);
+        if (getArmour() == 0) {
+            model.body.setActive(false);
+        }
+    }
+
+    @Override
     public Color3f getColor() {
-        return color;
+        if (model.body.isActive()) {
+            return color;
+        } else {
+            return destroyedColor;
+        }
     }
 
     public void setColor(Color3f color) {

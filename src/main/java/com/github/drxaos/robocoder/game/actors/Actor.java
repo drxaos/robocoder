@@ -126,4 +126,8 @@ public abstract class Actor {
             damage = shield;
         }
     }
+
+    public boolean isDestroyed() {
+        return damage >= shield;
+    }
 }

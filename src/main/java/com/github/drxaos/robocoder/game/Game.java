@@ -22,6 +22,7 @@ import java.util.Map;
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
     protected List<Actor> destroy = new ArrayList<Actor>();
+    protected List<Actor> create = new ArrayList<Actor>();
     protected List<Trace> traces = new ArrayList<Trace>();
 
     protected World world;
@@ -37,6 +38,14 @@ public class Game {
     }
 
     public void addActor(Actor actor) {
+        if (started) {
+            create.add(actor);
+        } else {
+            doAddActor(actor);
+        }
+    }
+
+    protected void doAddActor(Actor actor) {
         actors.add(actor);
         actor.setGame(this);
         if (started) {
@@ -79,6 +88,11 @@ public class Game {
                 actor.stop();
             }
         }
+        destroy.clear();
+        for (Actor actor : create) {
+            doAddActor(actor);
+        }
+        create.clear();
     }
 
     public List<Actor> resolvePoint(double x, double y) {
