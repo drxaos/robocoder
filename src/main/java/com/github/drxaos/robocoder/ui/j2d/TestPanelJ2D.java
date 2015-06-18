@@ -1,15 +1,15 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- *
+ * <p/>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
- * 	* Redistributions of source code must retain the above copyright notice,
- * 	  this list of conditions and the following disclaimer.
- * 	* Redistributions in binary form must reproduce the above copyright notice,
- * 	  this list of conditions and the following disclaimer in the documentation
- * 	  and/or other materials provided with the distribution.
- *
+ * * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * * Redistributions in binary form must reproduce the above copyright notice,
+ * this list of conditions and the following disclaimer in the documentation
+ * and/or other materials provided with the distribution.
+ * <p/>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -61,6 +61,7 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
 
     private final Vec2 dragginMouse = new Vec2();
     private boolean drag = false;
+    private boolean skip = false;
 
     public TestPanelJ2D(TestbedModel argModel) {
         setBackground(Color.black);
@@ -164,6 +165,9 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
     }
 
     public boolean render() {
+        if (skip) {
+            return true;
+        }
         if (dbImage == null) {
             log.debug("dbImage is null, creating a new one");
             if (panelWidth <= 0 || panelHeight <= 0) {
@@ -182,6 +186,9 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
     }
 
     public void paintScreen() {
+        if (skip) {
+            return;
+        }
         try {
             Graphics g = this.getGraphics();
             if ((g != null) && dbImage != null) {
@@ -192,5 +199,13 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
         } catch (AWTError e) {
             log.error("Graphics context error", e);
         }
+    }
+
+    public boolean isSkip() {
+        return skip;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 }

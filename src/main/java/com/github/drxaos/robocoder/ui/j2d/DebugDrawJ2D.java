@@ -38,6 +38,16 @@
  * Created at 3:09:27 AM Jul 17, 2010
  * <p/>
  * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p/>
+ * Created at 3:09:27 AM Jul 17, 2010
  */
 /**
  * Created at 3:09:27 AM Jul 17, 2010
@@ -65,6 +75,7 @@ public class DebugDrawJ2D extends DebugDraw {
 
     private final TestPanelJ2D panel;
     private final ColorPool cpool = new ColorPool();
+    private boolean skip;
 
     /**
      * @param viewport
@@ -130,7 +141,12 @@ public class DebugDrawJ2D extends DebugDraw {
         getWorldToScreenToOut(p2, sp2);
 
         Graphics2D g = getGraphics();
-        Color c = cpool.getColor(color.x, color.y, color.z);
+        Color c;
+        if (color == null) {
+            c = cpool.getColor(0, 0, 0);
+        } else {
+            c = cpool.getColor(color.x, color.y, color.z);
+        }
         g.setColor(c);
 
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
@@ -192,7 +208,12 @@ public class DebugDrawJ2D extends DebugDraw {
             yInts[i] = (int) temp.y;
         }
 
-        Color c = cpool.getColor(color.x, color.y, color.z, .4f);
+        Color c;
+        if (color == null) {
+            c = cpool.getColor(0, 0, 0);
+        } else {
+            c = cpool.getColor(color.x, color.y, color.z, .4f);
+        }
         g.setColor(c);
         g.fillPolygon(xInts, yInts, vertexCount);
 
@@ -253,5 +274,14 @@ public class DebugDrawJ2D extends DebugDraw {
             argPoints[i].x = (argCenter.x + MathUtils.cos(i * inc) * argRadius);
             argPoints[i].y = (argCenter.y + MathUtils.sin(i * inc) * argRadius);
         }
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+        panel.setSkip(skip);
+    }
+
+    public boolean isSkip() {
+        return skip;
     }
 }

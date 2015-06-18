@@ -28,6 +28,7 @@ import java.util.Map;
 
 public class TestbedDrawer {
 
+    private boolean skip = false;
     private DebugDraw m_debugDraw;
     private World world;
 
@@ -46,7 +47,15 @@ public class TestbedDrawer {
         pool = world.getPool();
     }
 
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+        ((DebugDrawJ2D) m_debugDraw).setSkip(skip);
+    }
+
     public void drawWorld() {
+        if (skip) {
+            return;
+        }
         if (m_debugDraw == null) {
             return;
         }
@@ -79,7 +88,7 @@ public class TestbedDrawer {
 
         for (Body b = m_bodyList; b != null; b = b.getNext()) {
             xf.set(b.getTransform());
-            for (int i = 3; i >= 0; i--) {
+            for (int i = 1; i >= 0; i--) {
                 for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
                     if (i == 0) {
                         Color3f userColor = getUserColor(b);
@@ -114,10 +123,10 @@ public class TestbedDrawer {
                                 color.set(0.9f, 0.7f, 0.7f);
                             }
                         }
+                        drawShape(f, xf, color);
                     } else {
-                        color.set(0, 0, 0);
+                        drawShape(f, xf, null);
                     }
-                    drawShape(f, xf, color);
                 }
             }
         }
@@ -127,27 +136,46 @@ public class TestbedDrawer {
     }
 
     public void drawTraces(List<Game.Trace> traces) {
+        if (skip) {
+            return;
+        }
         for (Iterator<Game.Trace> iterator = traces.iterator(); iterator.hasNext(); ) {
             Game.Trace trace = iterator.next();
+
+            float alpha = (float) (1d * trace.ttl / trace.startTtl / 2);
+            if (alpha > 1) {
+                alpha = 1;
+            }
+            if (alpha < 0) {
+                alpha = 0;
+            }
 
             if (trace.points.length == 2) {
                 ((DebugDrawJ2D) m_debugDraw).drawSegment(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
                         new Vec2((float) trace.points[1].x, (float) trace.points[1].y),
-                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, alpha
                 );
             } else if (trace.points.length == 1 && trace.radius != null) {
                 ((DebugDrawJ2D) m_debugDraw).drawCircle(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
                         trace.radius,
-                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, alpha
                 );
             } else if (trace.points.length == 1) {
                 ((DebugDrawJ2D) m_debugDraw).drawCircle(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
                         .2f,
-                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, alpha
                 );
+            } else if (!trace.polygon) {
+                for (int i = 0; i < trace.points.length - 1; i++) {
+                    ((DebugDrawJ2D) m_debugDraw).drawSegment(
+                            new Vec2((float) trace.points[i].x, (float) trace.points[i].y),
+                            new Vec2((float) trace.points[i + 1].x, (float) trace.points[i + 1].y),
+                            trace.color3f, trace.width, alpha
+                    );
+                }
             } else {
                 Vec2[] vec2s = new Vec2[trace.points.length];
                 for (int i = 0; i < trace.points.length; i++) {
@@ -155,13 +183,15 @@ public class TestbedDrawer {
                 }
                 ((DebugDrawJ2D) m_debugDraw).drawPolygon(
                         vec2s, vec2s.length,
-                        trace.color3f, trace.width, (float) (1d * trace.ttl / trace.startTtl / 2)
+                        trace.color3f, trace.width, alpha
                 );
             }
 
-            trace.ttl--;
-            if (trace.ttl <= 0) {
-                iterator.remove();
+            if (!trace.permanent) {
+                trace.ttl--;
+                if (trace.ttl <= 0) {
+                    iterator.remove();
+                }
             }
         }
     }
@@ -179,6 +209,9 @@ public class TestbedDrawer {
     }
 
     private void drawShape(Fixture fixture, Transform xf, Color3f color) {
+        if (skip) {
+            return;
+        }
         switch (fixture.getType()) {
             case CIRCLE: {
                 CircleShape circle = (CircleShape) fixture.getShape();
@@ -234,6 +267,9 @@ public class TestbedDrawer {
     }
 
     private void drawJoint(Joint joint) {
+        if (skip) {
+            return;
+        }
         Body bodyA = joint.getBodyA();
         Body bodyB = joint.getBodyB();
         Transform xf1 = bodyA.getTransform();

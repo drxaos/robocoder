@@ -31,6 +31,14 @@ public abstract class AbstractLevel extends TestbedTest {
     }
 
     @Override
+    public void update() {
+        if (drawer != null) {
+            drawer.setSkip(game.getTime() % 3 != 0);
+        }
+        super.update();
+    }
+
+    @Override
     public String getLevelName() {
         return this.getClass().getSimpleName();
     }

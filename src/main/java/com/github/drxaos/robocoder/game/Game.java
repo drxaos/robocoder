@@ -14,10 +14,7 @@ import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Game {
     protected List<Actor> actors = new ArrayList<Actor>();
@@ -112,6 +109,8 @@ public class Game {
         public int startTtl = 20;
         public int ttl = 20;
         public float width = .2f;
+        public boolean permanent = false;
+        public boolean polygon = false;
 
         public Trace() {
         }
@@ -153,6 +152,27 @@ public class Game {
             clone.width = width;
             return clone;
         }
+
+        public Trace width(float width) {
+            this.width = width;
+            return this;
+        }
+
+        public Trace permanent(boolean permanent) {
+            this.permanent = permanent;
+            return this;
+        }
+
+        public Trace polygon(boolean polygon) {
+            this.polygon = polygon;
+            return this;
+        }
+
+        public Trace ttl(int startTtl, int ttl) {
+            this.startTtl = startTtl;
+            this.ttl = ttl;
+            return this;
+        }
     }
 
     public void addTrace(KPoint[] points, Color3f color3f) {
@@ -176,13 +196,13 @@ public class Game {
     }
 
     private static class RayCastClosestCallback implements RayCastCallback {
-        Body fromBody;
+        Actor fromActor;
         Vec2 m_point;
         Body body;
         boolean scanSensors;
 
-        private RayCastClosestCallback(Body fromBody, boolean scanSensors) {
-            this.fromBody = fromBody;
+        private RayCastClosestCallback(Actor fromActor, boolean scanSensors) {
+            this.fromActor = fromActor;
             this.scanSensors = scanSensors;
         }
 
@@ -193,14 +213,29 @@ public class Game {
 
         public float reportFixture(Fixture fixture, Vec2 point,
                                    Vec2 normal, float fraction) {
-            body = fixture.getBody();
-            m_point = point;
-
-            Actor actor = (Actor) ((Map) body.getUserData()).get("actor");
+            if (body == fromActor.getModel().body) {
+                return -1;
+            }
+            Actor actor = (Actor) ((Map) fixture.getBody().getUserData()).get("actor");
             if (actor.isSensor() && !scanSensors) {
                 return -1;
             }
+
+            body = fixture.getBody();
+            m_point = point.clone();
             return fraction;
+        }
+
+
+        public void reportStartActor(Actor actor, Vec2 point) {
+            if (actor == fromActor) {
+                return;
+            }
+            if (actor.isSensor() && !scanSensors) {
+                return;
+            }
+            body = actor.getModel().body;
+            m_point = point.clone();
         }
 
         public Body getBody() {
@@ -226,13 +261,17 @@ public class Game {
 
     public ScanResult resolveDirection(double angle, double scanDistance, Actor fromActor, boolean scanSensors) {
         Map<Actor, Double> result = new HashMap<Actor, Double>();
-        RayCastClosestCallback callback = new RayCastClosestCallback(fromActor.getModel().body, scanSensors);
+        Vec2 fromPoint = fromActor.getModel().getPositionVec2();
+        RayCastClosestCallback callback = new RayCastClosestCallback(fromActor, scanSensors);
         world.raycast(callback,
-                fromActor.getModel().getPositionVec2(),
+                fromPoint,
                 fromActor.getModel().getPositionVec2().add(
                         new Vec2((float) (Math.cos(angle) * scanDistance),
                                 (float) (Math.sin(angle) * scanDistance))
                 ));
+        for (Actor actor : resolvePoint(fromPoint.x, fromPoint.y, fromActor)) {
+            callback.reportStartActor(actor, fromPoint);
+        }
         Body body = callback.getBody();
         if (body != null) {
             Vec2 point = callback.getPoint();
@@ -241,6 +280,19 @@ public class Game {
             return new ScanResult(actor, KPoint.distance(kpoint, fromActor.getModel().getPosition()), kpoint);
         }
         return null;
+    }
+
+    public Set<Actor> resolvePoint(double x, double y, Actor fromActor) {
+        Set<Actor> result = new HashSet<Actor>();
+        for (Actor actor : actors) {
+            if (actor == fromActor) {
+                continue;
+            }
+            if (actor.getModel().hasPoint(new Vec2((float) x, (float) y))) {
+                result.add(actor);
+            }
+        }
+        return result;
     }
 
     public Long getTime() {
