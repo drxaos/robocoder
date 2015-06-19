@@ -36,10 +36,6 @@ public class Prim {
                     continue;
                 try {
                     if (maz[st.r + x][st.c + y] == '.') continue;
-//                    if (st.r + x <= 1) continue;
-//                    if (st.c + y <= 1) continue;
-//                    if (st.r + x >= maz[0].length - 1) continue;
-//                    if (st.c + y >= maz.length - 1) continue;
                 } catch (Exception e) { // ignore ArrayIndexOutOfBounds
                     continue;
                 }
@@ -72,10 +68,6 @@ public class Prim {
                                     continue;
                                 try {
                                     if (maz[op.r + x][op.c + y] == '.') continue;
-//                                    if (op.r + x <= 1) continue;
-//                                    if (op.c + y <= 1) continue;
-//                                    if (op.r + x >= maz[0].length - 2) continue;
-//                                    if (op.c + y >= maz.length - 2) continue;
                                 } catch (Exception e) {
                                     continue;
                                 }

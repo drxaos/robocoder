@@ -7,9 +7,7 @@ import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.geom.KPolygon;
 import org.jbox2d.common.Color3f;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Wall extends Actor {
@@ -17,18 +15,14 @@ public class Wall extends Actor {
     protected final Color3f color = new Color3f(0.6f, 0.6f, 0.6f);
 
     protected StaticModel model;
-    protected List<Point2D> vertices;
+    protected ArrayList<KPoint> vertices;
 
-    public Wall(List<Point2D> vertices, double angle) {
-        this.vertices = Collections.unmodifiableList(vertices);
-
-        ArrayList<KPoint> kPoints = new ArrayList<KPoint>();
-        for (Point2D vertice : vertices) {
-            kPoints.add(new KPoint(vertice.getX(), vertice.getY()));
-        }
-
-        model = new StaticModel(new KPolygon(kPoints), new KPoint(0, 0), angle);
+    public Wall(List<KPoint> vertices, KPoint position, double angle) {
+        this.vertices = new ArrayList<KPoint>();
+        this.vertices.addAll(vertices);
+        model = new StaticModel(new KPolygon(this.vertices), position, angle);
     }
+
 
     public Wall(KPoint position, float width, float height, double angle) {
         model = new StaticModel(position, width, height, angle);
@@ -38,7 +32,7 @@ public class Wall extends Actor {
         model = new StaticModel(position, radius, 0d);
     }
 
-    public List<Point2D> getVertices() {
+    public List<KPoint> getVertices() {
         return vertices;
     }
 

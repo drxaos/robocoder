@@ -1,12 +1,12 @@
 package com.github.drxaos.robocoder.game.actors;
 
 
-import org.jbox2d.common.Color3f;
 import com.github.drxaos.robocoder.geom.KPoint;
+import org.jbox2d.common.Color3f;
 
 import java.util.List;
 
-public class TriggerPad extends Pad {
+public class TriggerPad extends Pad implements Trigger {
 
     public static final Color3f waitingColor = new Color3f(.5f, .5f, .9f);
     public static final Color3f triggeredColor = new Color3f(.3f, .3f, .3f);

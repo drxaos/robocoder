@@ -44,7 +44,7 @@ import java.awt.event.*;
 public class TestPanelJ2D extends JPanel implements TestbedPanel {
     private static final Logger log = LoggerFactory.getLogger(TestPanelJ2D.class);
 
-    public static final int INIT_WIDTH = 600;
+    public static final int INIT_WIDTH = 800;
     public static final int INIT_HEIGHT = 600;
 
     private static final float ZOOM_OUT_SCALE = .95f;

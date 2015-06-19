@@ -456,10 +456,6 @@ public abstract class TestbedTest
         }
 
         m_textLine = 20;
-
-        Vec2 worldMouse = getWorldMouse();
-        String pos = "" + df.format(worldMouse.x) + " : " + df.format(worldMouse.y);
-        model.getDebugDraw().drawString(0, 15, "" + title + " / " + pos, Color3f.WHITE);
         m_textLine += 15;
 
         // process our input
@@ -492,6 +488,10 @@ public abstract class TestbedTest
         }
 
         step();
+
+        Vec2 worldMouse = getWorldMouse();
+        String pos = "" + df.format(worldMouse.x) + " : " + df.format(worldMouse.y);
+        model.getDebugDraw().drawString(0, 15, "" + title + " / " + pos, Color3f.WHITE);
     }
 
     private final Color3f color1 = new Color3f(.3f, .95f, .3f);
