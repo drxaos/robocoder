@@ -8,6 +8,7 @@ import com.github.drxaos.robocoder.program.api.*;
 public class Example04 extends AbstractProgram {
 
     public static void main(String[] args) {
+        Tutorial04Arm.setSkipFramesMax(10);
         Tutorial04Arm.run(Example04.class);
     }
 

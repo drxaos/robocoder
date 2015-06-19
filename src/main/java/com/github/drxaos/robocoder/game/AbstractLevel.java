@@ -10,7 +10,6 @@ import javax.swing.*;
 public abstract class AbstractLevel extends TestbedTest {
     protected Game game;
     protected Class<? extends AbstractProgram> userProgram;
-    protected int drawInterval = 7;
 
     @Override
     public void initLevel(boolean deserialized) {
@@ -31,10 +30,26 @@ public abstract class AbstractLevel extends TestbedTest {
         game.afterStep();
     }
 
+    protected static long skipMax = 5;
+    protected long skipped = 0;
+    protected long lastDraw = 0;
+
+    public static void setSkipFramesMax(long skipMax) {
+        AbstractLevel.skipMax = skipMax;
+    }
+
     @Override
     public void update() {
         if (drawer != null) {
-            drawer.setSkip(game.getTime() % drawInterval != 0);
+            long nano = System.nanoTime();
+            if (nano - lastDraw >= 1000000000 / 25 || skipped >= skipMax) {
+                drawer.setSkip(false);
+                lastDraw = nano;
+                skipped = 0;
+            } else {
+                drawer.setSkip(true);
+                skipped++;
+            }
         }
         super.update();
     }

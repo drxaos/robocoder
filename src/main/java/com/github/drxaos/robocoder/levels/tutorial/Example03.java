@@ -8,6 +8,7 @@ import com.github.drxaos.robocoder.program.api.*;
 public class Example03 extends AbstractProgram {
 
     public static void main(String[] args) {
+        Tutorial03Radar.setSkipFramesMax(8);
         Tutorial03Radar.run(Example03.class);
     }
 

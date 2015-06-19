@@ -26,8 +26,6 @@ public class Tutorial04Arm extends AbstractLevel {
 
     @Override
     public void initLevel(Game game) {
-        drawInterval = 8;
-
         startPad = new StartPad(new KPoint(-10, 10), 0d);
         game.addActor(startPad);
 

@@ -10,6 +10,7 @@ import com.github.drxaos.robocoder.program.api.RadarDriver;
 public class Example01 extends AbstractProgram {
 
     public static void main(String[] args) {
+        Tutorial01Chassis.setSkipFramesMax(5);
         Tutorial01Chassis.run(Example01.class);
     }
 
