@@ -65,6 +65,10 @@ public class Tutorial04Arm extends AbstractLevel {
             successTimer = 0;
             return;
         }
+        if (robot.isActive()) {
+            successTimer = 0;
+            return;
+        }
         for (Box box : boxes) {
             if (!finishPad.getContacts().contains(box)) {
                 successTimer = 0;

@@ -19,6 +19,7 @@ public class Example03 extends AbstractProgram {
         ArmDriver armDriver = new ArmDriver(bus);
         TurretDriver turretDriver = new TurretDriver(bus);
 
+        KPoint prev = radarDriver.getPosition();
         while (true) {
 
             RadarDriver.Result scan = radarDriver.scan(0d, false);
@@ -26,19 +27,21 @@ public class Example03 extends AbstractProgram {
                 break;
             }
 
-            Double angle = 1f * Math.round(radarDriver.getAngle() / Math.PI * 4) / 4 * Math.PI + Math.PI / 2;
+            double lastMoveAngle = basicMovement.angle(prev, radarDriver.getPosition());
+            Double angle = 1f * Math.round(lastMoveAngle / Math.PI * 8) / 8 * Math.PI + Math.PI / 2;
             while (true) {
                 scan = radarDriver.scan(angle, true);
                 while (scan != null && scan.properties.contains("breakable")) {
-                    basicMovement.rotate(angle, false, 10000);
+                    basicMovement.rotate(angle);
                     turretDriver.fire();
                     scan = radarDriver.scan(angle, true);
                 }
                 if (scan == null || scan.distance > 4.5) {
                     KPoint position = radarDriver.getPosition();
+                    prev = position.copy();
                     position.setCoords(Math.round(position.x / 4 * 4), Math.round(position.y / 4 * 4));
                     position.translate(Math.round(Math.cos(angle) * 4), Math.round(Math.sin(angle) * 4));
-                    basicMovement.move(position, 0.4, 10000);
+                    basicMovement.move(position, 0.5, 10000);
                     break;
                 }
                 angle -= Math.PI / 2;

@@ -7,9 +7,6 @@ import com.github.drxaos.robocoder.game.actors.FinishPad;
 import com.github.drxaos.robocoder.game.actors.Robot;
 import com.github.drxaos.robocoder.game.actors.StartPad;
 import com.github.drxaos.robocoder.game.actors.TriggerPad;
-import com.github.drxaos.robocoder.game.equipment.ArmEquipment;
-import com.github.drxaos.robocoder.game.equipment.ChassisEquipment;
-import com.github.drxaos.robocoder.game.equipment.RadarEquipment;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import org.jbox2d.common.Color3f;
@@ -76,6 +73,10 @@ public class Tutorial01Chassis extends AbstractLevel {
 
     private void checkSuccess() {
         if (!finishPad.getContacts().contains(robot)) {
+            successTimer = 0;
+            return;
+        }
+        if (robot.isActive()) {
             successTimer = 0;
             return;
         }

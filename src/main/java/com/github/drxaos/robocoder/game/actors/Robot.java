@@ -17,9 +17,6 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
 
     protected RobotModel model;
 
-
-    protected boolean active = true;
-
     protected final Color3f destroyedColor = new Color3f(0.3f, 0.3f, 0.3f);
     protected Color3f color = new Color3f(0.9f, 0.7f, 0.7f);
 
@@ -29,7 +26,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
     }
 
     public boolean isActive() {
-        return active;
+        return userProgramThread != null && userProgramThread.isAlive();
     }
 
     @Override
@@ -103,7 +100,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
 
     @Override
     public boolean isTowable() {
-        return !active;
+        return !isActive();
     }
 
     @Override

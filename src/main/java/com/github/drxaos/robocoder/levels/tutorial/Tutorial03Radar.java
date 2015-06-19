@@ -77,6 +77,10 @@ public class Tutorial03Radar extends AbstractLevel {
             successTimer = 0;
             return;
         }
+        if (robot.isActive()) {
+            successTimer = 0;
+            return;
+        }
         if (++successTimer > 100) {
             success = true;
             JOptionPane.showMessageDialog(null, "Level completed!", "Success!", JOptionPane.INFORMATION_MESSAGE);

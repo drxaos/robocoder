@@ -19,7 +19,7 @@ public class Example02 extends AbstractProgram {
         TurretDriver turretDriver = new TurretDriver(bus);
 
         for (int i = 0; i < 8; i++) {
-            basicMovement.rotate(radarDriver.getAngle() + Math.PI / 4, false, 10000);
+            basicMovement.rotate(radarDriver.getAngle() + Math.PI / 4);
             turretDriver.fire();
         }
     }

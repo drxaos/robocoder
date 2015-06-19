@@ -53,6 +53,10 @@ public class Tutorial02Turret extends AbstractLevel {
             successTimer = 0;
             return;
         }
+        if (robot.isActive()) {
+            successTimer = 0;
+            return;
+        }
         for (TargetBuilding target : targets) {
             if (!target.isDestroyed()) {
                 successTimer = 0;

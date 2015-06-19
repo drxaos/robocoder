@@ -8,7 +8,7 @@ import com.github.drxaos.robocoder.program.api.*;
 public class Example04 extends AbstractProgram {
 
     public static void main(String[] args) {
-        Tutorial04Arm.setSkipFramesMax(10);
+        Tutorial04Arm.setSkipFramesMax(20);
         Tutorial04Arm.run(Example04.class);
     }
 
@@ -66,7 +66,7 @@ public class Example04 extends AbstractProgram {
             }
             if (x != null & y != null) {
                 basicMovement.move(new KPoint(x, start.y), 0.3, 10000);
-                basicMovement.rotate(Math.PI / 2, false, 10000);
+                basicMovement.rotate(Math.PI / 2 * (y > start.y ? 1 : -1));
                 basicMovement.move(new KPoint(x, y), 0.3, 10000);
 
                 armDriver.tieForward();
@@ -77,10 +77,14 @@ public class Example04 extends AbstractProgram {
                 float nx = 5 + 20 - 2 - col * 3;
                 float ny = 20 - row * 3;
 
-                while (radarDriver.getPosition().getY() > start.getY()) ;
+                if (y > start.y) {
+                    while (radarDriver.getPosition().getY() > start.getY()) ;
+                } else {
+                    while (radarDriver.getPosition().getY() < start.getY()) ;
+                }
 
                 basicMovement.move(new KPoint(nx - 5, ny), 0.6, 10000);
-                basicMovement.rotate(0, false, 10000);
+                basicMovement.rotate(0);
                 basicMovement.move(new KPoint(nx, ny), 0.6, 10000);
 
                 armDriver.untie();
@@ -101,5 +105,11 @@ public class Example04 extends AbstractProgram {
                 break;
             }
         }
+
+        float nx = 5 + 20 - 2 - col * 3;
+        float ny = 20 - row * 3;
+
+        basicMovement.move(nx - 5, ny);
+        basicMovement.move(nx, ny);
     }
 }

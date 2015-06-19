@@ -1,10 +1,10 @@
 package com.github.drxaos.robocoder.levels.waypoints;
 
+import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.api.BasicMovement;
 import com.github.drxaos.robocoder.program.api.RadarDriver;
 import com.github.drxaos.robocoder.program.api.RobotDriver;
-import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.util.ArrayList;
 
@@ -38,14 +38,14 @@ public class WaypointsProgram extends AbstractProgram {
                     robotDriver.say("Please drag me to that point!");
                     while (true) {
                         KPoint newPoint = radarDriver.getPosition();
-                        if (basicMovement.distance(newPoint, failPoint) > 0.2) {
+                        if (newPoint.distance(failPoint) > 0.2) {
                             break;
                         }
                     }
                 }
                 robotDriver.say(null);
 
-                if (basicMovement.distance(radarDriver.getPosition(), new KPoint(0, 0)) < 0.3) {
+                if (radarDriver.getPosition().distance(new KPoint(0, 0)) < 0.3) {
                     basicMovement.stop();
                 }
             }

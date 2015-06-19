@@ -1,9 +1,7 @@
 package com.github.drxaos.robocoder.program.api;
 
-import com.github.drxaos.robocoder.program.Bus;
 import com.github.drxaos.robocoder.geom.KPoint;
-
-import java.awt.geom.Point2D;
+import com.github.drxaos.robocoder.program.Bus;
 
 public class BasicMovement {
 
@@ -29,22 +27,19 @@ public class BasicMovement {
         }
     }
 
-    public boolean rotate(double toAngle, boolean precise, int maxMs) {
+    public boolean rotate(double toAngle) {
         if (chassisDriver == null || radarDriver == null) {
             return false;
         }
-        long end = radarDriver.getTime() + maxMs;
+        long end = radarDriver.getTime() + 10000;
         stop();
         while (radarDriver.getTime() < end) {
             double azimuth = differenceAngle(radarDriver.getAngle(), toAngle);
-            if (Math.abs(azimuth) < (precise ? 0.0001 : 0.001)) {
+            if (Math.abs(azimuth) < 0.001) {
                 stop();
                 return true;
             }
-            if (precise) {
-                azimuth = Math.max(Math.abs(azimuth) - 0.03, 0.001) * Math.signum(azimuth);
-            }
-            int force = 500;
+            int force = 100;
             chassisDriver.setLeftAcceleration(-1 * force * azimuth);
             chassisDriver.setRightAcceleration(1 * force * azimuth);
         }
@@ -52,22 +47,19 @@ public class BasicMovement {
         return false;
     }
 
-    public boolean forward(double distance, boolean precise, int maxMs) {
+    public boolean forward(double distance) {
         if (chassisDriver == null || radarDriver == null) {
             return false;
         }
-        long end = radarDriver.getTime() + maxMs;
+        long end = radarDriver.getTime() + 10000;
         stop();
         KPoint start = radarDriver.getPosition();
         while (radarDriver.getTime() < end) {
             KPoint current = radarDriver.getPosition();
-            double remains = distance - distance(start, current);
-            if (Math.abs(remains) < (precise ? 0.001 : 0.01)) {
+            double remains = distance - start.distance(current);
+            if (Math.abs(remains) < 0.01) {
                 stop();
                 return true;
-            }
-            if (precise) {
-                remains = Math.max(Math.abs(remains) - 1, 0.01) * Math.signum(remains);
             }
             int force = 100;
             chassisDriver.setLeftAcceleration(1 * force * remains);
@@ -78,7 +70,11 @@ public class BasicMovement {
     }
 
     public boolean move(double x, double y) {
-        return move(new KPoint(x, y), 0.5d, 100000);
+        return move(new KPoint(x, y), 0.5d, 10000);
+    }
+
+    public boolean move(KPoint to) {
+        return move(to, 0.5d, 10000);
     }
 
     public boolean move(KPoint to, double accuracy, int timeout) {
@@ -95,7 +91,7 @@ public class BasicMovement {
             //System.out.println(current.toString() + ", a:" + myAngle / Math.PI * 180);
             double angleToTarget = angle(current, to);
             double azimuth = differenceAngle(myAngle, angleToTarget);
-            double distance = distance(to, current);
+            double distance = current.distance(to);
             if (distance < 1 && Math.abs(azimuth) > accuracy && Math.abs(azimuth) < Math.PI - accuracy) {
                 chassisDriver.setLeftAcceleration(-rotateForce * azimuth);
                 chassisDriver.setRightAcceleration(rotateForce * azimuth);
@@ -106,8 +102,10 @@ public class BasicMovement {
                 stop();
                 return true;
             } else {
-                double distanceLeft = distance(to, new KPoint(current.getX() + (float) Math.cos(myAngle + Math.PI / 2) * width, current.getY() + (float) Math.sin(myAngle + Math.PI / 2) * width));
-                double distanceRight = distance(to, new KPoint(current.getX() + (float) Math.cos(myAngle - Math.PI / 2) * width, current.getY() + (float) Math.sin(myAngle - Math.PI / 2) * width));
+                KPoint leftPoint = current.translateCopy(Math.cos(myAngle + Math.PI / 2) * width, Math.sin(myAngle + Math.PI / 2) * width);
+                KPoint rightPoint = current.translateCopy(Math.cos(myAngle - Math.PI / 2) * width, Math.sin(myAngle - Math.PI / 2) * width);
+                double distanceLeft = leftPoint.distance(to);
+                double distanceRight = rightPoint.distance(to);
                 double distDiff = distanceLeft - distanceRight;
                 double left = (Math.min(1 * force * distance, 100) + rotateForce * distDiff);
                 double right = (Math.min(1 * force * distance, 100) - rotateForce * distDiff);
@@ -119,8 +117,8 @@ public class BasicMovement {
         return false;
     }
 
-    public double differenceAngle(double theta1, double theta2) {
-        double dif = theta2 - theta1;
+    public double differenceAngle(double fromAngle, double toAngle) {
+        double dif = toAngle - fromAngle;
         while (dif < -Math.PI) dif += 2 * Math.PI;
         while (dif > Math.PI) dif -= 2 * Math.PI;
         return dif;
@@ -129,10 +127,6 @@ public class BasicMovement {
     public double angle(KPoint from, KPoint to) {
         double dx = to.getX() - from.getX();
         double dy = to.getY() - from.getY();
-        return Math.atan2(dy, dx);
-    }
-
-    public double distance(KPoint from, KPoint to) {
-        return new Point2D.Float((float) from.getX(), (float) from.getY()).distance(new Point2D.Float((float) to.getX(), (float) to.getY()));
+        return differenceAngle(0, Math.atan2(dy, dx));
     }
 }
