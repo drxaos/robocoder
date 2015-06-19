@@ -43,6 +43,15 @@ public abstract class ControlledActor extends Actor {
         this.equipment.add(equipment);
     }
 
+    public <T extends Equipment> T getEquipment(Class<T> type) {
+        for (Equipment eq : equipment) {
+            if (type.isAssignableFrom(eq.getClass())) {
+                return (T) eq;
+            }
+        }
+        return null;
+    }
+
     public abstract void addDefaultEquipment();
 
     @Override

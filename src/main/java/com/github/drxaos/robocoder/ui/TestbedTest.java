@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -438,6 +439,8 @@ public abstract class TestbedTest
     public void exit() {
     }
 
+    DecimalFormat df = new DecimalFormat("####0.00");
+
     public void update() {
         if (resetPending) {
             _reset();
@@ -454,10 +457,10 @@ public abstract class TestbedTest
 
         m_textLine = 20;
 
-        if (title != null) {
-            model.getDebugDraw().drawString(model.getPanelWidth() / 2, 15, title, Color3f.WHITE);
-            m_textLine += 15;
-        }
+        Vec2 worldMouse = getWorldMouse();
+        String pos = "" + df.format(worldMouse.x) + " : " + df.format(worldMouse.y);
+        model.getDebugDraw().drawString(0, 15, "" + title + " / " + pos, Color3f.WHITE);
+        m_textLine += 15;
 
         // process our input
         if (!inputQueue.isEmpty()) {

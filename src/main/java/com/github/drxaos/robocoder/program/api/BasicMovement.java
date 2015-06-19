@@ -15,7 +15,7 @@ public class BasicMovement {
         radarDriver = new RadarDriver(bus);
     }
 
-    protected void sleep(int steps) {
+    public void sleep(int steps) {
         long end = radarDriver.getTime() + steps - 2;
         while (radarDriver.getTime() < end) ;
     }

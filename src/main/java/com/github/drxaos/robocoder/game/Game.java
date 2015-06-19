@@ -92,6 +92,16 @@ public class Game {
         create.clear();
     }
 
+    public List<Actor> resolveCircle(KPoint center, double radius) {
+        List<Actor> result = new ArrayList<Actor>();
+        for (Actor actor : actors) {
+            if (actor.getModel().getPosition().distance(center) <= radius) {
+                result.add(actor);
+            }
+        }
+        return result;
+    }
+
     public List<Actor> resolvePoint(double x, double y) {
         List<Actor> result = new ArrayList<Actor>();
         for (Actor actor : actors) {
