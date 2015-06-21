@@ -7,7 +7,7 @@ import com.github.drxaos.robocoder.program.api.*;
 public class Example06 extends AbstractProgram {
 
     public static void main(String[] args) {
-        Tutorial06Coop.setSkipFramesMax(8);
+        Tutorial06Coop.setSkipFramesMax(5);
         Tutorial06Coop.run(Example06.class);
     }
 

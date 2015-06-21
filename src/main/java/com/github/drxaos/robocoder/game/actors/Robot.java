@@ -44,7 +44,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
         float angle = (float) (model.getAngle() + (back ? Math.PI : 0));
         traceArm(angle, false);
 
-        Game.ScanResult scanResult = game.resolveDirection(angle, ARM_DISTANCE, this, false);
+        Game.ScanResult scanResult = game.resolveDirection(angle, ARM_DISTANCE, this, null, false);
         if (scanResult == null) {
             return false;
         }
@@ -88,7 +88,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
         traceArm(angle, true);
 
         model.untie();
-        Game.ScanResult scanResult = game.resolveDirection(angle, ARM_DISTANCE, this, false);
+        Game.ScanResult scanResult = game.resolveDirection(angle, ARM_DISTANCE, this, null, false);
         if (scanResult == null) {
             return;
         }
@@ -125,6 +125,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
         super.damage(points);
         if (getArmour() == 0) {
             model.body.setActive(false);
+            stop();
         }
     }
 

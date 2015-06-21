@@ -164,7 +164,7 @@ public class Tutorial06Coop extends AbstractLevel {
             traces[0] = new Game.Trace(new KPoint[]{
                     new KPoint(1.5f, 10),
                     new KPoint(14f, 10),
-            }, idleTraceColor).permanent(true).width(.5f);
+            }, idleTraceColor).permanent(true).width(.5f).background(true);
             game.addTrace(traces[0]);
             traces[1] = new Game.Trace(new KPoint[]{
                     new KPoint(16f, 10),
@@ -172,13 +172,13 @@ public class Tutorial06Coop extends AbstractLevel {
                     new KPoint(27f, 20 - 1.5f),
                     new KPoint(27f, 10),
                     new KPoint(39f, 10),
-            }, idleTraceColor).permanent(true).width(.5f);
+            }, idleTraceColor).permanent(true).width(.5f).background(true);
             game.addTrace(traces[1]);
             traces[2] = new Game.Trace(new KPoint[]{
                     new KPoint(41f, 10),
                     new KPoint(50f, 10),
                     new KPoint(50f, 1.5f),
-            }, idleTraceColor).permanent(true).width(.5f);
+            }, idleTraceColor).permanent(true).width(.5f).background(true);
             game.addTrace(traces[2]);
         }
         for (int i = 0; i < pressPads.length; i++) {

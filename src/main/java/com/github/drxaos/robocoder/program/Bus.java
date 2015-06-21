@@ -21,7 +21,7 @@ public class Bus {
             while (request != null) {
                 try {
                     debug("writeRequest wait");
-                    wait();    // Block while full
+                    wait(1000);    // Block while full
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -35,7 +35,7 @@ public class Bus {
             while (response == null) {
                 try {
                     debug("readResponse wait");
-                    wait();    // Block while empty
+                    wait(1000);    // Block while empty
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -75,5 +75,11 @@ public class Bus {
             response = e;
         }
         notifyAll();                // Awaken any waiting read
+    }
+
+    public synchronized void reset() {
+        request = null;
+        response = null;
+        notifyAll();
     }
 }

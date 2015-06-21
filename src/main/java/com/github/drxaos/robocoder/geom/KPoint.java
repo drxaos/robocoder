@@ -30,6 +30,8 @@
  */
 package com.github.drxaos.robocoder.geom;
 
+import org.jbox2d.common.Vec2;
+
 /**
  * @author Keith Woodward
  */
@@ -77,6 +79,14 @@ public class KPoint {
         this.y = p.y;
     }
 
+    public static KPoint fromVec2(Vec2 vec2) {
+        return new KPoint(vec2.x, vec2.y);
+    }
+
+    public Vec2 toVec2() {
+        return new Vec2((float) x, (float) y);
+    }
+
     public void translate(KPoint pointIncrement) {
         translate(pointIncrement.x, pointIncrement.y);
     }
@@ -84,6 +94,10 @@ public class KPoint {
     public void translate(double xIncrement, double yIncrement) {
         this.x += xIncrement;
         this.y += yIncrement;
+    }
+
+    public KPoint translateCopyToAngle(double distance, double angle) {
+        return new KPoint(this.x + Math.cos(angle) * distance, this.y + Math.sin(angle) * distance);
     }
 
     public KPoint translateCopy(KPoint pointIncrement) {
@@ -410,7 +424,23 @@ public class KPoint {
         return a * d - b * c;
     }
 
+    public static KPoint segmentaIntersect(double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4) {
+        double denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+        if (denom == 0.0) { // Lines are parallel.
+            return null;
+        }
+        double ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+        double ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+        if (ua >= 0.0f && ua <= 1.0f && ub >= 0.0f && ub <= 1.0f) {
+            // Get the intersection point.
+            return new KPoint((x1 + ua * (x2 - x1)), (y1 + ua * (y2 - y1)));
+        }
 
+        return null;
+    }
+    public static KPoint segmentaIntersect(KPoint p1, KPoint p2, KPoint p3, KPoint p4) {
+        return segmentaIntersect(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
+    }
     /**
      * Returns a positive double if (x, y) is counter-clockwise to (x2, y2) relative to the origin
      * in the cartesian coordinate space (positive x-axis extends right, positive y-axis extends up).

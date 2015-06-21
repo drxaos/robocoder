@@ -528,7 +528,7 @@ public abstract class TestbedTest
 
         m_world.step(timeStep, 10, 10);
 
-        drawer.drawWorld();
+        draw();
 
         if (timeStep > 0f) {
             ++stepCount;
@@ -539,6 +539,10 @@ public abstract class TestbedTest
             Vec2 p2 = mouseJoint.getTarget();
             debugDraw.drawSegment(p1, p2, mouseColor);
         }
+    }
+
+    protected void draw() {
+        drawer.drawWorld();
     }
 
     public void queueShiftMouseDown(Vec2 p) {

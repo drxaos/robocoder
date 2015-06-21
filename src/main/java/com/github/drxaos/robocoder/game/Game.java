@@ -9,7 +9,6 @@ import org.jbox2d.callbacks.RayCastCallback;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.Fixture;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
@@ -121,6 +120,8 @@ public class Game {
         public float width = .2f;
         public boolean permanent = false;
         public boolean polygon = false;
+        public boolean background = false;
+        public Actor resolvableAsActor;
 
         public Trace() {
         }
@@ -178,6 +179,16 @@ public class Game {
             return this;
         }
 
+        public Trace background(boolean background) {
+            this.background = background;
+            return this;
+        }
+
+        public Trace resolvableAs(Actor actor) {
+            this.resolvableAsActor = actor;
+            return this;
+        }
+
         public Trace ttl(int startTtl, int ttl) {
             this.startTtl = startTtl;
             this.ttl = ttl;
@@ -208,8 +219,9 @@ public class Game {
     private static class RayCastClosestCallback implements RayCastCallback {
         Actor fromActor;
         Vec2 m_point;
-        Body body;
+        Actor actor;
         boolean scanSensors;
+        float fraction = 1;
 
         private RayCastClosestCallback(Actor fromActor, boolean scanSensors) {
             this.fromActor = fromActor;
@@ -217,13 +229,13 @@ public class Game {
         }
 
         public void init() {
-            body = null;
+            actor = null;
             m_point = null;
         }
 
         public float reportFixture(Fixture fixture, Vec2 point,
                                    Vec2 normal, float fraction) {
-            if (body == fromActor.getModel().body) {
+            if (fixture.getBody() == fromActor.getModel().body) {
                 return -1;
             }
             Actor actor = (Actor) ((Map) fixture.getBody().getUserData()).get("actor");
@@ -231,11 +243,20 @@ public class Game {
                 return -1;
             }
 
-            body = fixture.getBody();
+            this.actor = actor;
             m_point = point.clone();
+            this.fraction = fraction;
             return fraction;
         }
 
+        public void reportResolvableTrace(Trace trace, Vec2 point, float fraction) {
+            if (trace.resolvableAsActor.isSensor() && !scanSensors) {
+                return;
+            }
+            this.actor = trace.resolvableAsActor;
+            m_point = point.clone();
+            this.fraction = fraction;
+        }
 
         public void reportStartActor(Actor actor, Vec2 point) {
             if (actor == fromActor) {
@@ -244,16 +265,21 @@ public class Game {
             if (actor.isSensor() && !scanSensors) {
                 return;
             }
-            body = actor.getModel().body;
+            this.actor = actor;
             m_point = point.clone();
+            fraction = 0;
         }
 
-        public Body getBody() {
-            return body;
+        public Actor getActor() {
+            return actor;
         }
 
         public Vec2 getPoint() {
             return m_point;
+        }
+
+        public float getFraction() {
+            return fraction;
         }
     }
 
@@ -269,23 +295,37 @@ public class Game {
         }
     }
 
-    public ScanResult resolveDirection(double angle, double scanDistance, Actor fromActor, boolean scanSensors) {
+    public ScanResult resolveDirection(double angle, double scanDistance, Actor fromActor, KPoint fromPoint, boolean scanSensors) {
         Map<Actor, Double> result = new HashMap<Actor, Double>();
-        Vec2 fromPoint = fromActor.getModel().getPositionVec2();
+        Vec2 fromPointVec2;
+        if (fromPoint == null) {
+            fromPoint = fromActor.getModel().getPosition();
+        }
+        fromPointVec2 = fromPoint.toVec2();
         RayCastClosestCallback callback = new RayCastClosestCallback(fromActor, scanSensors);
         world.raycast(callback,
-                fromPoint,
+                fromPointVec2,
                 fromActor.getModel().getPositionVec2().add(
                         new Vec2((float) (Math.cos(angle) * scanDistance),
                                 (float) (Math.sin(angle) * scanDistance))
                 ));
-        for (Actor actor : resolvePoint(fromPoint.x, fromPoint.y, fromActor)) {
-            callback.reportStartActor(actor, fromPoint);
+        for (Actor actor : resolvePoint(fromPointVec2.x, fromPointVec2.y, fromActor)) {
+            callback.reportStartActor(actor, fromPointVec2);
         }
-        Body body = callback.getBody();
-        if (body != null) {
+        for (Trace trace : traces) {
+            if (trace.resolvableAsActor != null && trace.resolvableAsActor != fromActor) {
+                for (int i = 0; i < trace.points.length - 1; i++) {
+                    KPoint toPoint = fromPoint.translateCopyToAngle(scanDistance * callback.fraction, angle);
+                    KPoint intersection = KPoint.segmentaIntersect(trace.points[i], trace.points[i + 1], fromPoint, toPoint);
+                    if (intersection != null) {
+                        callback.reportResolvableTrace(trace, intersection.toVec2(), (float) (fromPoint.distance(intersection) / scanDistance));
+                    }
+                }
+            }
+        }
+        Actor actor = callback.getActor();
+        if (actor != null) {
             Vec2 point = callback.getPoint();
-            Actor actor = (Actor) ((Map) body.getUserData()).get("actor");
             KPoint kpoint = new KPoint(point.x, point.y);
             return new ScanResult(actor, KPoint.distance(kpoint, fromActor.getModel().getPosition()), kpoint);
         }

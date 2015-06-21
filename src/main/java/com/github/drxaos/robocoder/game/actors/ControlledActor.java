@@ -56,7 +56,8 @@ public abstract class ControlledActor extends Actor {
 
     @Override
     public void start() {
-        program.setBus(bus);
+        bus.reset();
+        program.setBus(bus = new Bus());
         this.userProgramThread = new Thread(new Runnable() {
             public void run() {
                 program.run();
@@ -83,6 +84,7 @@ public abstract class ControlledActor extends Actor {
     @Override
     public void stop() {
         try {
+            log("Program aborted");
             userProgramThread.stop();
         } catch (RuntimeException e) {
             // nothing

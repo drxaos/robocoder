@@ -56,10 +56,10 @@ public class Tutorial01Chassis extends AbstractLevel {
 
     Color3f traceColor = new Color3f(.2f, .2f, .2f);
     Game.Trace[] traces = new Game.Trace[]{
-            new Game.Trace(new KPoint[]{new KPoint(-15, 13), new KPoint(-15, 0), new KPoint(-2, 0)}, traceColor, 250).permanent(true),
-            new Game.Trace(new KPoint[]{new KPoint(0, 18), new KPoint(0, 2)}, traceColor, 250).permanent(true),
-            new Game.Trace(new KPoint[]{new KPoint(10, 8), new KPoint(10, 1), new KPoint(2, 1)}, traceColor, 250).permanent(true),
-            new Game.Trace(new KPoint[]{new KPoint(20, 18), new KPoint(20, -1), new KPoint(2, -1)}, traceColor, 250).permanent(true),
+            new Game.Trace(new KPoint[]{new KPoint(-15, 13), new KPoint(-15, 0), new KPoint(-2, 0)}, traceColor, 250).permanent(true).background(true),
+            new Game.Trace(new KPoint[]{new KPoint(0, 18), new KPoint(0, 2)}, traceColor, 250).permanent(true).background(true),
+            new Game.Trace(new KPoint[]{new KPoint(10, 8), new KPoint(10, 1), new KPoint(2, 1)}, traceColor, 250).permanent(true).background(true),
+            new Game.Trace(new KPoint[]{new KPoint(20, 18), new KPoint(20, -1), new KPoint(2, -1)}, traceColor, 250).permanent(true).background(true),
     };
 
     @Override

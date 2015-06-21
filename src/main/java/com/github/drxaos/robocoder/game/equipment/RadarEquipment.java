@@ -70,7 +70,7 @@ public class RadarEquipment implements Equipment {
             if (scanAngle.isNaN()) {
                 scanAngle = 0d;
             }
-            Game.ScanResult scanResult = game.resolveDirection(scanAngle, scanDistance, robot, scanSensors);
+            Game.ScanResult scanResult = game.resolveDirection(scanAngle, scanDistance, robot, null, scanSensors);
             if (scanResult != null) {
                 robot.getBus().writeResponse(scanResult.distance + "::" +
                         StringUtils.join(Arrays.asList(scanResult.actor.getTags()), "::"));

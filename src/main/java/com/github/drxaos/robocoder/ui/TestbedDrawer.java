@@ -87,42 +87,58 @@ public class TestbedDrawer {
         }
 
         for (Body b = m_bodyList; b != null; b = b.getNext()) {
-            xf.set(b.getTransform());
-            for (int i = 1; i >= 0; i--) {
-                for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
-                    if (i == 0) {
-                        Color3f userColor = getUserColor(b);
-                        if (!b.isActive()) {
+            if (!b.isActive()) {
+                xf.set(b.getTransform());
+                for (int i = 1; i >= 0; i--) {
+                    for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
+                        if (i == 0) {
+                            Color3f userColor = getUserColor(b);
                             if (userColor != null) {
                                 color.set(userColor);
                             } else {
                                 color.set(0.5f, 0.5f, 0.3f);
                             }
-                        } else if (b.getType() == BodyType.STATIC) {
-                            if (userColor != null) {
-                                color.set(userColor);
-                            } else {
-                                color.set(0.5f, 0.9f, 0.3f);
-                            }
-                        } else if (b.getType() == BodyType.KINEMATIC) {
-                            if (userColor != null) {
-                                color.set(userColor);
-                            } else {
-                                color.set(0.5f, 0.5f, 0.9f);
-                            }
-                        } else if (!b.isAwake()) {
-                            if (userColor != null) {
-                                color.set(userColor);
-                            } else {
-                                color.set(0.5f, 0.5f, 0.5f);
-                            }
+                            drawShape(f, xf, color);
                         } else {
-                            if (userColor != null) {
-                                color.set(userColor);
-                            } else {
-                                color.set(0.9f, 0.7f, 0.7f);
-                            }
+                            drawShape(f, xf, null);
                         }
+                    }
+                }
+            }
+        }
+        for (Body b = m_bodyList; b != null; b = b.getNext()) {
+            xf.set(b.getTransform());
+            for (int i = 1; i >= 0; i--) {
+                for (Fixture f = b.getFixtureList(); f != null; f = f.getNext()) {
+                    Color3f userColor = getUserColor(b);
+                    if (!b.isActive()) {
+                        continue;
+                    } else if (b.getType() == BodyType.STATIC) {
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.9f, 0.3f);
+                        }
+                    } else if (b.getType() == BodyType.KINEMATIC) {
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.5f, 0.9f);
+                        }
+                    } else if (!b.isAwake()) {
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.5f, 0.5f, 0.5f);
+                        }
+                    } else {
+                        if (userColor != null) {
+                            color.set(userColor);
+                        } else {
+                            color.set(0.9f, 0.7f, 0.7f);
+                        }
+                    }
+                    if (i == 0) {
                         drawShape(f, xf, color);
                     } else {
                         drawShape(f, xf, null);
@@ -135,12 +151,16 @@ public class TestbedDrawer {
         }
     }
 
-    public void drawTraces(List<Game.Trace> traces) {
+    public void drawTraces(List<Game.Trace> traces, boolean background) {
         if (skip) {
             return;
         }
         for (Iterator<Game.Trace> iterator = traces.iterator(); iterator.hasNext(); ) {
             Game.Trace trace = iterator.next();
+
+            if (trace.background != background) {
+                continue;
+            }
 
             float alpha = (float) (1d * trace.ttl / trace.startTtl / 2);
             if (alpha > 1) {
