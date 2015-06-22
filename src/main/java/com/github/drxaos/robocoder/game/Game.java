@@ -315,7 +315,7 @@ public class Game {
         for (Trace trace : traces) {
             if (trace.resolvableAsActor != null && trace.resolvableAsActor != fromActor) {
                 for (int i = 0; i < trace.points.length - 1; i++) {
-                    KPoint toPoint = fromPoint.translateCopyToAngle(scanDistance * callback.fraction, angle);
+                    KPoint toPoint = fromPoint.createPointFromAngle(angle, scanDistance * callback.fraction);
                     KPoint intersection = KPoint.segmentaIntersect(trace.points[i], trace.points[i + 1], fromPoint, toPoint);
                     if (intersection != null) {
                         callback.reportResolvableTrace(trace, intersection.toVec2(), (float) (fromPoint.distance(intersection) / scanDistance));

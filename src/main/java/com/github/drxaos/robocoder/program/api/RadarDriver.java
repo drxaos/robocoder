@@ -1,7 +1,7 @@
 package com.github.drxaos.robocoder.program.api;
 
-import com.github.drxaos.robocoder.program.Bus;
 import com.github.drxaos.robocoder.geom.KPoint;
+import com.github.drxaos.robocoder.program.Bus;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -35,6 +35,14 @@ public class RadarDriver {
     public static class Result {
         public Double distance;
         public Set<String> properties = new HashSet<String>();
+    }
+
+    public Result scanSensors(Double angle) {
+        return scan(angle, false);
+    }
+
+    public Result scanObjects(Double angle) {
+        return scan(angle, true);
     }
 
     public Result scan(Double angle, boolean objectsOnly) {

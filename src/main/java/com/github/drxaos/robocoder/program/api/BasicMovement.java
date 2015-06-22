@@ -48,6 +48,10 @@ public class BasicMovement {
     }
 
     public boolean forward(double distance) {
+        return forward(distance, 100);
+    }
+
+    public boolean forward(double distance, float speed) {
         if (chassisDriver == null || radarDriver == null) {
             return false;
         }
@@ -61,9 +65,8 @@ public class BasicMovement {
                 stop();
                 return true;
             }
-            int force = 100;
-            chassisDriver.setLeftAcceleration(1 * force * remains);
-            chassisDriver.setRightAcceleration(1 * force * remains);
+            chassisDriver.setLeftAcceleration(1 * speed * remains);
+            chassisDriver.setRightAcceleration(1 * speed * remains);
         }
         stop();
         return false;
@@ -92,9 +95,17 @@ public class BasicMovement {
             double angleToTarget = angle(current, to);
             double azimuth = differenceAngle(myAngle, angleToTarget);
             double distance = current.distance(to);
-            if (distance < 1 && Math.abs(azimuth) > accuracy && Math.abs(azimuth) < Math.PI - accuracy) {
-                chassisDriver.setLeftAcceleration(-rotateForce * azimuth);
-                chassisDriver.setRightAcceleration(rotateForce * azimuth);
+            if (distance < 1 && Math.abs(azimuth) > Math.PI / 2) {
+                double left = -rotateForce * azimuth;
+                double right = rotateForce * azimuth;
+                if (left > 0) {
+                    left = 0;
+                }
+                if (right > 0) {
+                    right = 0;
+                }
+                chassisDriver.setLeftAcceleration(left);
+                chassisDriver.setRightAcceleration(right);
             } else if (distance > 1 && Math.abs(azimuth) >= Math.PI / 2) {
                 chassisDriver.setLeftAcceleration(-rotateForce * azimuth);
                 chassisDriver.setRightAcceleration(rotateForce * azimuth);

@@ -44,7 +44,7 @@ public class Laser extends Actor {
     @Override
     public void afterStep() {
         super.afterStep();
-        KPoint peak = model.getPosition().translateCopyToAngle(1, model.getAngle());
+        KPoint peak = model.getPosition().createPointFromAngle(model.getAngle(), 1);
         Game.ScanResult scan = game.resolveDirection(model.getAngle(), distance, this, peak, false);
         scan.actor.damage(0.3f);
 
@@ -52,7 +52,7 @@ public class Laser extends Actor {
         if (Math.random() > 0.8) {
             double sparkAngle = model.getAngle() + Math.PI + (Math.random() - 0.5) * Math.PI * 6 / 7;
             game.addTrace(
-                    new Game.Trace(new KPoint[]{scan.point.translateCopyToAngle(Math.random() * 0.5 + 0.1, sparkAngle), scan.point.translateCopyToAngle(Math.random() * 0.5 + 0.5, sparkAngle)}, rayColor, 3).width(0.1f));
+                    new Game.Trace(new KPoint[]{scan.point.createPointFromAngle(sparkAngle, Math.random() * 0.5 + 0.1), scan.point.createPointFromAngle(sparkAngle, Math.random() * 0.5 + 0.5)}, rayColor, 3).width(0.1f));
         }
     }
 }

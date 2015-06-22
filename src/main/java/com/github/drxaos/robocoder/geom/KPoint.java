@@ -96,10 +96,6 @@ public class KPoint {
         this.y += yIncrement;
     }
 
-    public KPoint translateCopyToAngle(double distance, double angle) {
-        return new KPoint(this.x + Math.cos(angle) * distance, this.y + Math.sin(angle) * distance);
-    }
-
     public KPoint translateCopy(KPoint pointIncrement) {
         KPoint p = this.copy();
         p.translate(pointIncrement.x, pointIncrement.y);

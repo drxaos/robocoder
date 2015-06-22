@@ -3,8 +3,8 @@ package com.github.drxaos.robocoder.levels.tutorial;
 import com.github.drxaos.robocoder.game.AbstractLevel;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.Runner;
-import com.github.drxaos.robocoder.game.actors.*;
 import com.github.drxaos.robocoder.game.actors.Box;
+import com.github.drxaos.robocoder.game.actors.*;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 
@@ -44,8 +44,13 @@ public class Tutorial07Lasers extends AbstractLevel {
         }
 
         for (int i = 0; i < 4; i++) {
-            Laser laser = new Laser(new KPoint(10 + i * 12, -3), Math.PI / 2);
-            game.addActor(laser);
+            if (Math.random() > 0.5) {
+                Laser laser = new Laser(new KPoint(10 + i * 12, -3), Math.PI / 2);
+                game.addActor(laser);
+            } else {
+                Laser laser = new Laser(new KPoint(10 + i * 12, 23), -Math.PI / 2);
+                game.addActor(laser);
+            }
         }
 
         box = new Box(5, 20, 10);
