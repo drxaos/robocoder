@@ -13,7 +13,7 @@ public abstract class ControlledActor extends Actor {
     protected boolean logging = false;
     protected AbstractProgram program;
     protected Thread userProgramThread;
-    protected Bus bus = new Bus();
+    protected Bus bus;
 
     public ControlledActor(String uid) {
         this.uid = uid;
@@ -56,7 +56,6 @@ public abstract class ControlledActor extends Actor {
 
     @Override
     public void start() {
-        bus.reset();
         program.setBus(bus = new Bus());
         this.userProgramThread = new Thread(new Runnable() {
             public void run() {
@@ -68,14 +67,6 @@ public abstract class ControlledActor extends Actor {
         userProgramThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             public void uncaughtException(Thread t, Throwable e) {
                 log(e);
-                try {
-                    log("Trying to recover...");
-                    Thread.sleep(3000);
-                    setProgram(program.getClass());
-                    start();
-                } catch (InterruptedException e1) {
-                    log(e1);
-                }
             }
         });
         userProgramThread.start();
@@ -86,6 +77,8 @@ public abstract class ControlledActor extends Actor {
         try {
             log("Program aborted");
             userProgramThread.stop();
+            bus.destroy();
+            bus = null;
         } catch (RuntimeException e) {
             // nothing
         }

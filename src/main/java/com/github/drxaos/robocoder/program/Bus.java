@@ -8,6 +8,7 @@ public class Bus {
     private volatile String request;
     private volatile String response;
     private volatile long reqId = 0;
+    private volatile boolean active = true;
 
     private void debug(String msg) {
         //System.out.println(Thread.currentThread().getName() + ": " + msg);
@@ -22,6 +23,9 @@ public class Bus {
                 try {
                     debug("writeRequest wait");
                     wait(1000);    // Block while full
+                    if (!active) {
+                        throw new RuntimeException("bus destroyed");
+                    }
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -36,6 +40,9 @@ public class Bus {
                 try {
                     debug("readResponse wait");
                     wait(1000);    // Block while empty
+                    if (!active) {
+                        throw new RuntimeException("bus destroyed");
+                    }
                 } catch (InterruptedException ex) {
                     ex.printStackTrace();
                 }
@@ -77,9 +84,13 @@ public class Bus {
         notifyAll();                // Awaken any waiting read
     }
 
-    public synchronized void reset() {
+    public void destroy() {
+        active = false;
+        if (reqLock.isLocked()) {
+            reqLock.unlock();
+        }
         request = null;
         response = null;
-        notifyAll();
+        reqId = -1;
     }
 }
