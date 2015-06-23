@@ -15,6 +15,9 @@ public class Bus {
     }
 
     public synchronized String request(String e) {
+        if (!active) {
+            return null;
+        }
         try {
             reqLock.lock();
 
@@ -57,7 +60,29 @@ public class Bus {
         }
     }
 
+    public synchronized void waitRequestFromRunningThread(Thread thread) {
+        if (!active) {
+            return;
+        }
+        debug("waitRequest");
+        while (request == null && thread.getState() == Thread.State.RUNNABLE) {
+            try {
+                debug("waitRequest wait");
+                wait(1000);    // Block while empty
+                if (!active) {
+                    throw new RuntimeException("bus destroyed");
+                }
+            } catch (InterruptedException ex) {
+                ex.printStackTrace();
+            }
+        }
+        debug("waitRequest done");
+    }
+
     public synchronized String getRequest() {
+        if (!active) {
+            return null;
+        }
         debug("getRequest");
         String e = request;
         debug("getRequest done: " + e);
@@ -65,6 +90,9 @@ public class Bus {
     }
 
     public synchronized long getRequestId() {
+        if (!active) {
+            return -1;
+        }
         debug("getRequestId");
         long e = -1;
         if (request != null) {
@@ -75,6 +103,9 @@ public class Bus {
     }
 
     public synchronized void writeResponse(String e) {
+        if (!active) {
+            return;
+        }
         if (request != null) {
             debug("removeRequest");
             request = null;

@@ -108,6 +108,8 @@ public abstract class ControlledActor extends Actor {
 
     @Override
     public void afterStep() {
+        bus.waitRequestFromRunningThread(userProgramThread);
+
         for (Equipment eq : equipment) {
             eq.communicate(this, game);
         }

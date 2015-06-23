@@ -9,6 +9,7 @@ import java.util.List;
 
 public class RadioStationEquipment implements Equipment {
 
+    protected final String TRANSMIT = "radio-station::transmit::";
     protected double distance = 10d;
 
     public void setDistance(double distance) {
@@ -20,9 +21,8 @@ public class RadioStationEquipment implements Equipment {
         if (req == null || !req.startsWith("radio-station::")) {
             return;
         }
-        if (req.startsWith("radio-station::transmit::")) {
-            String[] split = req.split("::");
-            message = split[split.length - 1].replace("::", "");
+        if (req.startsWith(TRANSMIT)) {
+            message = req.substring(TRANSMIT.length());
             robot.getBus().writeResponse("radio-station::accepted");
         }
     }
