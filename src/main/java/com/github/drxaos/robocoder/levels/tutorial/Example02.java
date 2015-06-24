@@ -7,7 +7,7 @@ import com.github.drxaos.robocoder.program.api.*;
 public class Example02 extends AbstractProgram {
 
     public static void main(String[] args) {
-        Tutorial02Turret.setSkipFramesMax(0);
+        Tutorial02Turret.setSkipFramesMax(3);
         Tutorial02Turret.run(Example02.class);
     }
 

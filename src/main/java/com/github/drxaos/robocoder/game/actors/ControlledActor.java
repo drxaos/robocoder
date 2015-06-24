@@ -3,6 +3,7 @@ package com.github.drxaos.robocoder.game.actors;
 import com.github.drxaos.robocoder.game.equipment.Equipment;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.Bus;
+import com.github.drxaos.robocoder.program.LoadedProgram;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,8 +12,7 @@ public abstract class ControlledActor extends Actor {
     protected List<Equipment> equipment = new ArrayList<Equipment>();
     protected String uid;
     protected boolean logging = false;
-    protected AbstractProgram program;
-    protected Thread userProgramThread;
+    protected LoadedProgram program;
     protected Bus bus;
 
     public ControlledActor(String uid) {
@@ -23,17 +23,21 @@ public abstract class ControlledActor extends Actor {
         return bus;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
     public void enableLogging() {
         logging = true;
     }
 
-    protected void log(String msg) {
+    public void log(String msg) {
         if (logging) {
             System.out.println(uid + ": " + msg);
         }
     }
 
-    protected void log(Throwable t) {
+    public void log(Throwable t) {
         if (logging) {
             t.printStackTrace();
         }
@@ -57,26 +61,14 @@ public abstract class ControlledActor extends Actor {
     @Override
     public void start() {
         program.setBus(bus = new Bus());
-        this.userProgramThread = new Thread(new Runnable() {
-            public void run() {
-                program.run();
-                log("Program terminated");
-            }
-        }, "UserProgram: " + uid);
-        userProgramThread.setDaemon(true);
-        userProgramThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-            public void uncaughtException(Thread t, Throwable e) {
-                log(e);
-            }
-        });
-        userProgramThread.start();
+        program.start(this);
     }
 
     @Override
     public void stop() {
         try {
             log("Program aborted");
-            userProgramThread.stop();
+            program.stop();
             bus.destroy();
             bus = null;
         } catch (RuntimeException e) {
@@ -87,10 +79,12 @@ public abstract class ControlledActor extends Actor {
 
     public void setProgram(final Class<? extends AbstractProgram> program) {
         try {
-            this.program = program.newInstance();
+            this.program = new LoadedProgram(program);
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
     }
@@ -108,7 +102,7 @@ public abstract class ControlledActor extends Actor {
 
     @Override
     public void afterStep() {
-        bus.waitRequestFromRunningThread(userProgramThread);
+        bus.waitRequestFromRunningThread(program.getThread());
 
         for (Equipment eq : equipment) {
             eq.communicate(this, game);

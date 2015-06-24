@@ -23,7 +23,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
     }
 
     public boolean isActive() {
-        return userProgramThread != null && userProgramThread.isAlive();
+        return program != null && program.getThread() != null && program.getThread().isAlive();
     }
 
     @Override
