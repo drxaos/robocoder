@@ -18,7 +18,7 @@ public class SandboxingSecurityManager extends SecurityManager {
     }
 
     private void check(Permission perm) {
-        System.out.println("check: " + perm);
+        //System.out.println("check: " + perm);
 
         Boolean enabled = sandboxed.get(Thread.currentThread());
         if (enabled == null) {
