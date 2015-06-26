@@ -38,12 +38,9 @@ public class Example06 extends AbstractProgram {
 
             basicMovement.move(50, 0);
 
-            ready = false;
             while (true) {
                 RadarDriver.Result scanObjects = radarDriver.scanObjects(Math.PI * 0.6);
                 if (scanObjects.properties.contains("robot")) {
-                    ready = true;
-                } else if (ready) {
                     break;
                 }
             }
@@ -60,12 +57,9 @@ public class Example06 extends AbstractProgram {
 
             basicMovement.move(27, 20);
 
-            boolean ready = false;
             while (true) {
                 RadarDriver.Result scanObjects = radarDriver.scanObjects(Math.PI * -0.25);
                 if (scanObjects.properties.contains("robot")) {
-                    ready = true;
-                } else if (ready) {
                     break;
                 }
             }
