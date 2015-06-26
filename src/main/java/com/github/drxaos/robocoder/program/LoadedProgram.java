@@ -1,7 +1,6 @@
 package com.github.drxaos.robocoder.program;
 
 import com.github.drxaos.robocoder.game.actors.ControlledActor;
-import com.github.drxaos.robocoder.geom.KPoint;
 
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -54,6 +53,7 @@ public class LoadedProgram {
                 actor.log(e);
             }
         });
+        ((SandboxingSecurityManager) System.getSecurityManager()).sandboxThread(thread);
         thread.start();
     }
 
@@ -79,7 +79,12 @@ class ProgramLoader extends URLClassLoader {
                 return apiClass;
             }
         }
-        return super.loadClass(name);
+        ((SandboxingSecurityManager) System.getSecurityManager()).disableSandbox(Thread.currentThread());
+        try {
+            return super.loadClass(name);
+        } finally {
+            ((SandboxingSecurityManager) System.getSecurityManager()).enableSandbox(Thread.currentThread());
+        }
     }
 
 }
