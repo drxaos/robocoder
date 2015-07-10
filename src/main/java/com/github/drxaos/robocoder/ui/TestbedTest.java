@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -492,8 +493,11 @@ public abstract class TestbedTest
         step();
 
         Vec2 worldMouse = getWorldMouse();
-        String pos = "" + df.format(worldMouse.x) + " : " + df.format(worldMouse.y);
-        model.getDebugDraw().drawString(0, 15, "" + title + " / " + pos, Color3f.WHITE);
+        String pos = "";
+        if (!GraphicsEnvironment.isHeadless()) {
+            pos += " / " + df.format(worldMouse.x) + " : " + df.format(worldMouse.y);
+        }
+        model.getDebugDraw().drawString(0, 15, "" + title + pos, Color3f.WHITE);
     }
 
     private final Color3f color1 = new Color3f(.3f, .95f, .3f);

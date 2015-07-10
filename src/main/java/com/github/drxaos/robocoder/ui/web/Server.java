@@ -10,6 +10,9 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
 
 public class Server extends AbstractVerticle {
     ImageSource source;
@@ -49,11 +52,11 @@ public class Server extends AbstractVerticle {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
             final boolean[] ready = new boolean[]{true};
-            final int[] count = new int[]{0};
+            //final int[] count = new int[]{0};
 
-//            ws.closeHandler(event ->
-//                    System.out.println("Done" + count[0])
-//            );
+            ws.closeHandler(event -> {
+                //System.out.println("Done" + count[0]);
+            });
 
             final BufferedImage[] prev = new BufferedImage[]{null};
 
@@ -68,56 +71,21 @@ public class Server extends AbstractVerticle {
                     String s = new String(data.getBytes());
                     if (s.equals("i")) {
                         // new image request
-                        final long start = System.currentTimeMillis();
+                        //final long start = System.currentTimeMillis();
 
                         BufferedImage image = source.getImage();
-                        BufferedImage diff = prev[0] == null ? image : diff(prev[0], image);
-//                        BufferedImage diff = image;
-                        if (diff != null) {
-                            ImageIO.write(diff, "png", stream);
-                            prev[0] = image;
-                        }
+                        sendDiffs(prev[0], image, stream);
+                        prev[0] = image;
 
                         byte[] ar = stream.toByteArray();
                         if (ar.length > 0) {
                             // send diff to client
                             //System.out.println("Frame " + count[0]++ + " / " + ar.length + " bytes / " + (System.currentTimeMillis() - start) + " ms");
                             ws.writeBinaryMessage(Buffer.buffer(ar));
-                            ready[0] = true;
                             stream.reset();
-                        } else {
-                            // wait changes
-                            new Thread() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        for (int i = 0; i < 20; i++) {
-                                            Thread.sleep(100);
-
-                                            BufferedImage image = source.getImage();
-                                            BufferedImage diff = prev[0] == null ? image : diff(prev[0], image);
-                                            if (diff != null) {
-                                                ImageIO.write(diff, "png", stream);
-                                                prev[0] = image;
-                                            }
-                                            byte[] ar = stream.toByteArray();
-                                            if (ar.length > 0) {
-                                                //System.out.println("Frame " + count[0]++ + " / " + ar.length + " bytes / " + (System.currentTimeMillis() - start) + " ms");
-                                                ws.writeBinaryMessage(Buffer.buffer(ar));
-                                                ready[0] = true;
-                                                stream.reset();
-                                                return;
-                                            }
-                                        }
-                                        ws.writeFinalTextFrame("e");
-                                        ready[0] = true;
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                        ws.close();
-                                    }
-                                }
-                            }.start();
                         }
+                        ws.writeFinalTextFrame("e");
+                        ready[0] = true;
                     } else if (s.equals("s")) {
                         // image size request
                         BufferedImage image = source.getImage();
@@ -132,33 +100,74 @@ public class Server extends AbstractVerticle {
         }).listen(8888);
     }
 
-    private BufferedImage diff(BufferedImage img1, BufferedImage img2) {
-        int width1 = img1.getWidth(null);
+    private void sendDiffs(BufferedImage img1, BufferedImage img2, OutputStream out) throws IOException {
         int width2 = img2.getWidth(null);
-        int height1 = img1.getHeight(null);
         int height2 = img2.getHeight(null);
+        int height1 = img1 == null ? height2 : img1.getHeight(null);
+        int width1 = img1 == null ? width2 : img1.getWidth(null);
 
         if ((width1 != width2) || (height1 != height2)) {
             System.err.println("different image sizes");
         }
 
+        int xParts = 10;
+        int yParts = 10;
+        Integer[][] lefts = new Integer[xParts][yParts];
+        Integer[][] rights = new Integer[xParts][yParts];
+        Integer[][] tops = new Integer[xParts][yParts];
+        Integer[][] bottoms = new Integer[xParts][yParts];
+
         BufferedImage res = new BufferedImage(width1, height1, BufferedImage.TYPE_INT_ARGB);
-        int[] data1 = ((IntegerInterleavedRaster) img1.getData()).getDataStorage();
+        int[] data1 = img1 == null ? null : ((IntegerInterleavedRaster) img1.getData()).getDataStorage();
         int[] data2 = ((IntegerInterleavedRaster) img2.getData()).getDataStorage();
         Raster rData = res.getData();
         int[] data3 = ((IntegerInterleavedRaster) rData).getDataStorage();
 
-        long count = 0;
-        for (int i = 0; i < data1.length; i++) {
-            if (data1[i] == data2[i]) {
-                data3[i] = 0;
-            } else {
+        int count = 0;
+        for (int i = 0; i < data2.length; i++) {
+            if (data1 == null || data1[i] != data2[i]) {
+                int x = i % width1;
+                int y = i / width1;
+                int xPart = x / (width1 / xParts);
+                int yPart = y / (height1 / yParts);
+                if (lefts[xPart][yPart] == null || lefts[xPart][yPart] > x) {
+                    lefts[xPart][yPart] = x;
+                }
+                if (tops[xPart][yPart] == null || tops[xPart][yPart] > y) {
+                    tops[xPart][yPart] = y;
+                }
+                if (rights[xPart][yPart] == null || rights[xPart][yPart] < x) {
+                    rights[xPart][yPart] = x;
+                }
+                if (bottoms[xPart][yPart] == null || bottoms[xPart][yPart] < y) {
+                    bottoms[xPart][yPart] = y;
+                }
                 data3[i] = data2[i];
                 count++;
+            } else {
+                data3[i] = 0;
             }
         }
         res.setData(rData);
-        return count > 0 ? res : null;
+        ByteArrayOutputStream imgStream = new ByteArrayOutputStream();
+        if (count > 0) {
+            for (int x = 0; x < xParts; x++) {
+                for (int y = 0; y < yParts; y++) {
+                    if (lefts[x][y] != null) {
+                        Integer left = lefts[x][y];
+                        Integer top = tops[x][y];
+                        Integer right = rights[x][y] + 1;
+                        Integer bottom = bottoms[x][y] + 1;
+                        BufferedImage subimage = res.getSubimage(left, top, right - left, bottom - top);
+                        imgStream.reset();
+                        ImageIO.write(subimage, "png", imgStream);
+                        byte[] imgBytes = imgStream.toByteArray();
+                        byte[] infoBytes = ByteBuffer.allocate(12).putInt(left).putInt(top).putInt(imgBytes.length).array();
+                        out.write(infoBytes);
+                        out.write(imgBytes);
+                    }
+                }
+            }
+        }
     }
-
 }

@@ -8,6 +8,7 @@
 
 <section>
     <canvas height='1' width='1' id='cnv'>canvas</canvas>
+    <div id="traff">0</div>
     <pre id="log"></pre>
 </section>
 
@@ -16,13 +17,13 @@
         document.getElementById('log').appendChild(document.createTextNode(msg + "\n"));
     }
 
-    function encode(input) {
+    function encodeFrame(input, start, size) {
         var keyStr = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
         var output = "";
         var chr1, chr2, chr3, enc1, enc2, enc3, enc4;
-        var i = 0;
+        var i = start;
 
-        while (i < input.length) {
+        while (i < start + size) {
             chr1 = input[i++];
             chr2 = i < input.length ? input[i++] : Number.NaN; // Not sure if the index
             chr3 = i < input.length ? input[i++] : Number.NaN; // checks are needed here
@@ -40,13 +41,16 @@
             output += keyStr.charAt(enc1) + keyStr.charAt(enc2) +
                     keyStr.charAt(enc3) + keyStr.charAt(enc4);
         }
-        return "data:image/jpg;base64," + output;
+        return "data:image/png;base64," + output;
     }
 
     var socket = new WebSocket("ws://" + location.host + "/stream");
+    var traff = 0;
+    var frames = 0;
 
     socket.onopen = function () {
         log("Соединение установлено.");
+        traff = frames = 0;
         socket.send("s");
     };
 
@@ -65,7 +69,7 @@
             socket.send("i");
             window.DRAWER_READY = false;
         }
-    }, 10);
+    }, 80);
 
     socket.onmessage = function (event) {
         if (typeof event.data == "string") {
@@ -83,15 +87,25 @@
             var reader = new FileReader();
             reader.addEventListener("load", function (e) {
                 var bytes = new Uint8Array(e.target.result);
+                traff += bytes.length;
+                frames++;
+                document.getElementById('traff').innerHTML = "Frames " + frames + " bytes " + traff;
 
-                var image = new Image();
-                image.src = encode(bytes);
+                var start = 0;
+                while (start < bytes.length) {
+                    var x = (((bytes[0 + start] * 256) + bytes[1 + start]) * 256 + bytes[2 + start]) * 256 + bytes[3 + start];
+                    var y = (((bytes[4 + start] * 256) + bytes[5 + start]) * 256 + bytes[6 + start]) * 256 + bytes[7 + start];
+                    var s = (((bytes[8 + start] * 256) + bytes[9 + start]) * 256 + bytes[10 + start]) * 256 + bytes[11 + start];
+                    start += 12;
 
-                var cnv = document.getElementById("cnv");
-                var ctx = cnv.getContext('2d');
-                ctx.drawImage(image, 0, 0);
+                    var image = new Image();
+                    image.src = encodeFrame(bytes, start, s);
+                    start += s;
 
-                window.DRAWER_READY = true;
+                    var cnv = document.getElementById("cnv");
+                    var ctx = cnv.getContext('2d');
+                    ctx.drawImage(image, x, y);
+                }
             });
             reader.readAsArrayBuffer(event.data);
         }
