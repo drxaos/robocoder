@@ -4,6 +4,7 @@ import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.actors.Actor;
 import com.github.drxaos.robocoder.ui.j2d.DebugDrawJ2D;
 import com.github.drxaos.robocoder.ui.j2d.TestPanelJ2D;
+import com.github.drxaos.robocoder.ui.web.ImageSource;
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.collision.shapes.ChainShape;
 import org.jbox2d.collision.shapes.CircleShape;
@@ -22,24 +23,25 @@ import org.jbox2d.dynamics.joints.PulleyJoint;
 import org.jbox2d.pooling.IWorldPool;
 import org.jbox2d.pooling.arrays.Vec2Array;
 
+import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class TestbedDrawer {
+public class TestbedDrawer implements ImageSource {
 
-    private boolean skip = false;
-    private DebugDraw m_debugDraw;
-    private World world;
+    protected boolean skip = false;
+    protected DebugDraw m_debugDraw;
+    protected World world;
 
-    private final Transform xf = new Transform();
-    private final Color3f color = new Color3f();
-    private final Vec2 center = new Vec2();
-    private final Vec2 axis = new Vec2();
-    private final Vec2 v1 = new Vec2();
-    private final Vec2 v2 = new Vec2();
-    private final Vec2Array tlvertices = new Vec2Array();
-    private final IWorldPool pool;
+    protected final Transform xf = new Transform();
+    protected final Color3f color = new Color3f();
+    protected final Vec2 center = new Vec2();
+    protected final Vec2 axis = new Vec2();
+    protected final Vec2 v1 = new Vec2();
+    protected final Vec2 v2 = new Vec2();
+    protected final Vec2Array tlvertices = new Vec2Array();
+    protected final IWorldPool pool;
 
     public TestbedDrawer(DebugDraw m_debugDraw, World world) {
         this.m_debugDraw = m_debugDraw;
@@ -64,7 +66,7 @@ public class TestbedDrawer {
 
         Vec2 leftTop = m_debugDraw.getScreenToWorld(0, 0);
         leftTop.set((int) leftTop.x, (int) leftTop.y);
-        TestPanelJ2D panel = ((DebugDrawJ2D) m_debugDraw).gtPanel();
+        TestPanelJ2D panel = ((DebugDrawJ2D) m_debugDraw).getPanel();
         Vec2 rightBottom = m_debugDraw.getScreenToWorld(panel.getScreenWidth(), panel.getScreenHeight());
         float factor = 5;
         float scale = m_debugDraw.getScreenToWorld(new Vec2(1, 1)).sub(m_debugDraw.getScreenToWorld(new Vec2(0, 0))).x;
@@ -176,6 +178,12 @@ public class TestbedDrawer {
                         new Vec2((float) trace.points[1].x, (float) trace.points[1].y),
                         trace.color3f, trace.width, alpha
                 );
+            } else if (trace.points.length == 1 && trace.text != null) {
+                ((DebugDrawJ2D) m_debugDraw).drawString(
+                        new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
+                        trace.text,
+                        trace.color3f
+                );
             } else if (trace.points.length == 1 && trace.radius != null) {
                 ((DebugDrawJ2D) m_debugDraw).drawCircle(
                         new Vec2((float) trace.points[0].x, (float) trace.points[0].y),
@@ -216,7 +224,7 @@ public class TestbedDrawer {
         }
     }
 
-    private Color3f getUserColor(Body b) {
+    protected Color3f getUserColor(Body b) {
         Object userData = b.getUserData();
         Object actor;
         if (userData != null && userData instanceof Map &&
@@ -228,7 +236,7 @@ public class TestbedDrawer {
         }
     }
 
-    private void drawShape(Fixture fixture, Transform xf, Color3f color) {
+    protected void drawShape(Fixture fixture, Transform xf, Color3f color) {
         if (skip) {
             return;
         }
@@ -286,7 +294,7 @@ public class TestbedDrawer {
         }
     }
 
-    private void drawJoint(Joint joint) {
+    protected void drawJoint(Joint joint) {
         if (skip) {
             return;
         }
@@ -330,4 +338,14 @@ public class TestbedDrawer {
         pool.pushVec2(2);
     }
 
+    @Override
+    public BufferedImage getImage() {
+        TestPanelJ2D panel = ((DebugDrawJ2D) m_debugDraw).getPanel();
+        BufferedImage image = panel.getPublishImage();
+        if (image != null) {
+            return image;
+        } else {
+            return null;
+        }
+    }
 }

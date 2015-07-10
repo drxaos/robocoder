@@ -1,5 +1,7 @@
 package com.github.drxaos.robocoder.ui;
 
+import com.github.drxaos.robocoder.ui.web.Server;
+import io.vertx.core.Vertx;
 import org.jbox2d.callbacks.*;
 import org.jbox2d.collision.AABB;
 import org.jbox2d.collision.Collision;
@@ -505,6 +507,7 @@ public abstract class TestbedTest
     private final Vec2 tangent = new Vec2();
     private final List<String> statsList = new ArrayList<String>();
     protected TestbedDrawer drawer;
+    protected Server server;
 
     public synchronized void step() {
         float hz = 60;
@@ -513,6 +516,7 @@ public abstract class TestbedTest
         final DebugDraw debugDraw = model.getDebugDraw();
         if (drawer == null) {
             drawer = new TestbedDrawer(debugDraw, m_world);
+            Vertx.vertx().deployVerticle(server = new Server(drawer));
         }
 
         int flags = 0;

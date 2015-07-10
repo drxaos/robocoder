@@ -9,6 +9,7 @@ import com.github.drxaos.robocoder.game.actors.Robot;
 import com.github.drxaos.robocoder.game.actors.StartPad;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
+import org.jbox2d.common.Vec2;
 
 import javax.swing.*;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class Tutorial04Arm extends AbstractLevel {
 
     @Override
     public void initLevel(Game game) {
+        setCamera(new Vec2(0, 10), 15);
+
         startPad = new StartPad(new KPoint(-10, 10), 0d);
         game.addActor(startPad);
 

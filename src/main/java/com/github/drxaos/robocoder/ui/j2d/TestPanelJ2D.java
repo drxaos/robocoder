@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * <p/>
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
@@ -9,7 +9,7 @@
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p/>
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 
 /**
  * @author Daniel Murphy
@@ -51,7 +52,10 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
     private static final float ZOOM_IN_SCALE = 1.05f;
 
     private Graphics2D dbg = null;
+
     private Image dbImage = null;
+    private Image headlessImg = null;
+    private BufferedImage publishImage = null;
 
     private int panelWidth;
     private int panelHeight;
@@ -164,6 +168,10 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
         return panelHeight;
     }
 
+    public BufferedImage getPublishImage() {
+        return publishImage;
+    }
+
     public boolean render() {
         if (skip) {
             return true;
@@ -185,6 +193,14 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
         return true;
     }
 
+    public static BufferedImage toBufferedImage(Image img) {
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+        return bimage;
+    }
+
     public void paintScreen() {
         if (skip) {
             return;
@@ -193,11 +209,33 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
             Graphics g = this.getGraphics();
             if ((g != null) && dbImage != null) {
                 g.drawImage(dbImage, 0, 0, null);
+                publishImage = toBufferedImage(dbImage);
                 Toolkit.getDefaultToolkit().sync();
                 g.dispose();
             }
         } catch (AWTError e) {
             log.error("Graphics context error", e);
+        }
+    }
+
+    @Override
+    public Image createImage(int width, int height) {
+        if (GraphicsEnvironment.isHeadless()) {
+            return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        } else {
+            return super.createImage(width, height);
+        }
+    }
+
+    @Override
+    public Graphics getGraphics() {
+        if (GraphicsEnvironment.isHeadless()) {
+            if (headlessImg == null) {
+                headlessImg = new BufferedImage(INIT_WIDTH, INIT_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+            }
+            return headlessImg.getGraphics();
+        } else {
+            return super.getGraphics();
         }
     }
 

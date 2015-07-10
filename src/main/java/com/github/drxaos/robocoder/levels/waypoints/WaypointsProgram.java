@@ -4,7 +4,7 @@ import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
 import com.github.drxaos.robocoder.program.api.BasicMovement;
 import com.github.drxaos.robocoder.program.api.RadarDriver;
-import com.github.drxaos.robocoder.program.api.RobotDriver;
+import com.github.drxaos.robocoder.program.api.DebugDriver;
 
 import java.util.ArrayList;
 
@@ -15,7 +15,7 @@ public class WaypointsProgram extends AbstractProgram {
         while (true) {
 
             BasicMovement basicMovement = new BasicMovement(bus);
-            RobotDriver robotDriver = new RobotDriver(bus);
+            DebugDriver robotDriver = new DebugDriver(bus);
             RadarDriver radarDriver = new RadarDriver(bus);
 
             ArrayList<KPoint> way = new ArrayList<KPoint>();

@@ -7,6 +7,7 @@ import com.github.drxaos.robocoder.game.actors.Box;
 import com.github.drxaos.robocoder.game.actors.*;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
+import org.jbox2d.common.Vec2;
 
 import javax.swing.*;
 import java.util.Arrays;
@@ -23,6 +24,8 @@ public class Tutorial07Lasers extends AbstractLevel {
 
     @Override
     public void initLevel(Game game) {
+        setCamera(new Vec2(30, 10), 10);
+
         startPad = new StartPad(new KPoint(0, 0), 0d);
         game.addActor(startPad);
 

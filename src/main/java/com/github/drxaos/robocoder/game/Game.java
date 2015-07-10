@@ -122,6 +122,7 @@ public class Game {
         public boolean polygon = false;
         public boolean background = false;
         public Actor resolvableAsActor;
+        public String text;
 
         public Trace() {
         }
@@ -140,6 +141,12 @@ public class Game {
         public Trace(KPoint point, Float radius, Color3f color3f) {
             this.points = new KPoint[]{point};
             this.radius = radius;
+            this.color3f = color3f;
+        }
+
+        public Trace(KPoint point, String text, Color3f color3f) {
+            this.points = new KPoint[]{point};
+            this.text = text;
             this.color3f = color3f;
         }
 

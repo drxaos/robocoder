@@ -3,7 +3,7 @@ package com.github.drxaos.robocoder.game.equipment;
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.actors.ControlledActor;
 import com.github.drxaos.robocoder.geom.KPoint;
-import com.sun.deploy.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jbox2d.common.Color3f;
 
 import java.util.Arrays;

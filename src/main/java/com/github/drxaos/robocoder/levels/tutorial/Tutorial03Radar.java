@@ -10,6 +10,7 @@ import com.github.drxaos.robocoder.game.equipment.RadarEquipment;
 import com.github.drxaos.robocoder.game.equipment.TurretEquipment;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
+import org.jbox2d.common.Vec2;
 
 import javax.swing.*;
 
@@ -24,7 +25,7 @@ public class Tutorial03Radar extends AbstractLevel {
 
     @Override
     public void initLevel(Game game) {
-
+        setCamera(new Vec2(30, 28), 9);
 
         char[][] maze = Prim.maze(15, 15);
 

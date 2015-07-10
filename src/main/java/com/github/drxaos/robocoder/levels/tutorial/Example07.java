@@ -50,8 +50,6 @@ public class Example07 extends AbstractProgram {
 
             armDriver.untie();
 
-            position = radarDriver.getPosition();
-
             basicMovement.forward(5, -50);
             basicMovement.move(laser.x - 5, laser.y + 5);
             RadarDriver.Result scan = radarDriver.scanSensors(0d);

@@ -8,7 +8,7 @@ import com.github.drxaos.robocoder.program.api.*;
 public class Example04 extends AbstractProgram {
 
     public static void main(String[] args) {
-        Tutorial04Arm.setSkipFramesMax(20);
+        Tutorial04Arm.setSkipFramesMax(8);
         Tutorial04Arm.run(Example04.class);
     }
 
@@ -18,6 +18,7 @@ public class Example04 extends AbstractProgram {
         ChassisDriver chassisDriver = new ChassisDriver(bus);
         ArmDriver armDriver = new ArmDriver(bus);
         TurretDriver turretDriver = new TurretDriver(bus);
+        DebugDriver debugDriver = new DebugDriver(bus);
 
 
         int col = 1, row = 1;
@@ -25,6 +26,7 @@ public class Example04 extends AbstractProgram {
 
         while (true) {
             Float x = null, y = null;
+            debugDriver.say("searching");
             search:
             {
                 for (int i = 0; i < 90; i++) {
@@ -65,6 +67,8 @@ public class Example04 extends AbstractProgram {
                 }
             }
             if (x != null & y != null) {
+                debugDriver.say("found");
+
                 basicMovement.move(new KPoint(x, start.y), 0.3, 10000);
                 basicMovement.rotate(Math.PI / 2 * (y > start.y ? 1 : -1));
                 basicMovement.move(new KPoint(x, y), 0.3, 10000);
@@ -83,11 +87,16 @@ public class Example04 extends AbstractProgram {
                     while (radarDriver.getPosition().getY() < start.getY()) ;
                 }
 
+
+                debugDriver.say("put");
+
                 basicMovement.move(new KPoint(nx - 5, ny), 0.6, 10000);
                 basicMovement.rotate(0);
                 basicMovement.move(new KPoint(nx, ny), 0.6, 10000);
 
                 armDriver.untie();
+
+                debugDriver.say("return");
 
                 chassisDriver.setLeftAcceleration(-50d);
                 chassisDriver.setRightAcceleration(-50d);
@@ -105,6 +114,8 @@ public class Example04 extends AbstractProgram {
                 break;
             }
         }
+
+        debugDriver.say("done");
 
         float nx = 5 + 20 - 2 - col * 3;
         float ny = 20 - row * 3;

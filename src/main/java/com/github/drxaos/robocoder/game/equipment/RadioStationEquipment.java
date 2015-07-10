@@ -11,6 +11,7 @@ public class RadioStationEquipment implements Equipment {
 
     protected final String TRANSMIT = "radio-station::transmit::";
     protected double distance = 10d;
+    protected int ttl = 3;
 
     public void setDistance(double distance) {
         this.distance = distance;
@@ -23,11 +24,13 @@ public class RadioStationEquipment implements Equipment {
         }
         if (req.startsWith(TRANSMIT)) {
             message = req.substring(TRANSMIT.length());
+            update = game.getTime();
             robot.getBus().writeResponse("radio-station::accepted");
         }
     }
 
     protected String message = "";
+    protected long update = 0;
 
     protected Game.Trace trace;
     protected Color3f traceColor = new Color3f(.7f, .7f, .1f);
@@ -38,7 +41,9 @@ public class RadioStationEquipment implements Equipment {
             trace.permanent(true).ttl(20, 10).width(.1f);
             game.addTrace(trace);
         }
-
+        if (update + ttl < game.getTime()) {
+            message = null;
+        }
         if (message != null && !self.isDestroyed()) {
             List<Actor> actors = game.resolveCircle(self.getModel().getPosition(), distance);
             for (Actor actor : actors) {
@@ -48,8 +53,8 @@ public class RadioStationEquipment implements Equipment {
                         radio.addMessage(message);
                     }
                 }
-                trace.ttl = (int) (1 + Math.abs(Math.sin(1f * game.getTime() / 80)) * trace.startTtl / 2);
             }
+            trace.ttl = (int) (1 + Math.abs(Math.sin(1f * game.getTime() / 80)) * trace.startTtl / 2);
         } else {
             trace.ttl = 0;
         }

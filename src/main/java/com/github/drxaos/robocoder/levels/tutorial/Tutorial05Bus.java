@@ -10,6 +10,7 @@ import com.github.drxaos.robocoder.game.actors.StartPad;
 import com.github.drxaos.robocoder.game.equipment.MemoryEquipment;
 import com.github.drxaos.robocoder.geom.KPoint;
 import com.github.drxaos.robocoder.program.AbstractProgram;
+import org.jbox2d.common.Vec2;
 
 import javax.swing.*;
 
@@ -24,6 +25,8 @@ public class Tutorial05Bus extends AbstractLevel {
 
     @Override
     public void initLevel(Game game) {
+        setCamera(new Vec2(145, 0), 2.2f);
+
         startPad = new StartPad(new KPoint(0, 0), 0d);
         game.addActor(startPad);
 

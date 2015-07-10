@@ -5,8 +5,6 @@ import com.github.drxaos.robocoder.ui.*;
 import com.github.drxaos.robocoder.ui.j2d.TestPanelJ2D;
 import org.jbox2d.common.Vec2;
 
-import javax.swing.*;
-
 public abstract class AbstractLevel extends TestbedTest {
     protected Game game;
     protected Class<? extends AbstractProgram> userProgram;
@@ -69,11 +67,7 @@ public abstract class AbstractLevel extends TestbedTest {
         TestbedModel model = new TestbedModel();
         model.addTest(this);
         TestbedPanel panel = new TestPanelJ2D(model);    // create our testbed panel
-        JFrame testbed = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
-
-        testbed.setVisible(true);
-        testbed.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        TestbedFrameFactory.create(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED); // put both into our testbed frame
     }
 
     public void setUserProgram(final Class<? extends AbstractProgram> userProgram) {

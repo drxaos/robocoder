@@ -38,6 +38,7 @@ public class Robot extends ControlledActor implements HasArm, HasTurret {
         addEquipment(new TurretEquipment());
         addEquipment(new MemoryEquipment());
         addEquipment(new RadioEquipment());
+        addEquipment(new DebugEquipment());
     }
 
     public boolean tie(boolean back) {

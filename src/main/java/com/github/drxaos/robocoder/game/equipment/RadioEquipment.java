@@ -2,7 +2,7 @@ package com.github.drxaos.robocoder.game.equipment;
 
 import com.github.drxaos.robocoder.game.Game;
 import com.github.drxaos.robocoder.game.actors.ControlledActor;
-import com.sun.deploy.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class RadioEquipment implements Equipment {
 
-    protected long keepTimeout = 5;
+    protected long keepTimeout = 6;
 
     Map<String, Long> messages = new HashMap<String, Long>();
 

@@ -8,6 +8,8 @@ public class Transmitter05 extends AbstractProgram {
 
     public void run() {
         MemoryDriver memoryDriver = new MemoryDriver(bus);
-        bus.request("radio-station::transmit::" + memoryDriver.load());
+        while (true) {
+            bus.request("radio-station::transmit::" + memoryDriver.load());
+        }
     }
 }

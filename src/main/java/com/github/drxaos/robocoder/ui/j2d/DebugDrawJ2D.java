@@ -1,7 +1,7 @@
 /**
  * Copyright (c) 2013, Daniel Murphy
  * All rights reserved.
- * <p/>
+ * <p>
  * Redistribution and use in source and binary forms, with or without modification,
  * are permitted provided that the following conditions are met:
  * * Redistributions of source code must retain the above copyright notice,
@@ -9,7 +9,7 @@
  * * Redistributions in binary form must reproduce the above copyright notice,
  * this list of conditions and the following disclaimer in the documentation
  * and/or other materials provided with the distribution.
- * <p/>
+ * <p>
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -20,33 +20,37 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
- * <p/>
+ * <p>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p>
+ * Created at 3:09:27 AM Jul 17, 2010
+ * <p>
  * Created at 3:09:27 AM Jul 17, 2010
  */
 /**
@@ -77,9 +81,6 @@ public class DebugDrawJ2D extends DebugDraw {
     private final ColorPool cpool = new ColorPool();
     private boolean skip;
 
-    /**
-     * @param viewport
-     */
     public DebugDrawJ2D(TestPanelJ2D argTestPanel) {
         super(new OBBViewportTransform());
         viewportTransform.setYFlip(true);
@@ -150,6 +151,11 @@ public class DebugDrawJ2D extends DebugDraw {
         g.setColor(c);
 
         g.drawLine((int) sp1.x, (int) sp1.y, (int) sp2.x, (int) sp2.y);
+    }
+
+    public void drawString(Vec2 pos, String s, Color3f color) {
+        getWorldToScreenToOut(pos, sp1);
+        super.drawString(sp1, s, color);
     }
 
     public void drawSegment(Vec2 p1, Vec2 p2, Color3f color, float width, float alpha) {
@@ -236,7 +242,7 @@ public class DebugDrawJ2D extends DebugDraw {
         return panel.getDBGraphics();
     }
 
-    public TestPanelJ2D gtPanel() {
+    public TestPanelJ2D getPanel() {
         return panel;
     }
 
