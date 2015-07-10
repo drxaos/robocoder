@@ -512,15 +512,22 @@ public abstract class TestbedTest
     private final List<String> statsList = new ArrayList<String>();
     protected TestbedDrawer drawer;
     protected Server server;
+    protected boolean pause = false;
 
     public synchronized void step() {
         float hz = 60;
-        float timeStep = hz > 0f ? 1f / hz : 0;
+        float timeStep = 1f / hz;
 
         final DebugDraw debugDraw = model.getDebugDraw();
         if (drawer == null) {
             drawer = new TestbedDrawer(debugDraw, m_world);
-            Vertx.vertx().deployVerticle(server = new Server(drawer));
+            if (GraphicsEnvironment.isHeadless()) {
+                Vertx.vertx().deployVerticle(server = new Server(drawer));
+            }
+        }
+
+        if (server != null) {
+            pause = (server.countViewers() == 0);
         }
 
         int flags = 0;
@@ -534,11 +541,11 @@ public abstract class TestbedTest
 
         pointCount = 0;
 
-        m_world.step(timeStep, 10, 10);
+        m_world.step(pause ? 0 : timeStep, 10, 10);
 
         draw();
 
-        if (timeStep > 0f) {
+        if (!pause) {
             ++stepCount;
         }
 

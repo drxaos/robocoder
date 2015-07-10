@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.util.HashSet;
 
 public class Server extends AbstractVerticle {
     ImageSource source;
@@ -20,6 +21,8 @@ public class Server extends AbstractVerticle {
     public Server(ImageSource source) {
         this.source = source;
     }
+
+    HashSet<String> viewers = new HashSet<>();
 
     @Override
     public void start() {
@@ -47,6 +50,7 @@ public class Server extends AbstractVerticle {
             }
             final String id = ws.textHandlerID();
             //System.out.println("registering new connection with id: " + id + "");
+            viewers.add(id);
 
             //System.out.println("Starting streaming...");
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -56,6 +60,7 @@ public class Server extends AbstractVerticle {
 
             ws.closeHandler(event -> {
                 //System.out.println("Done" + count[0]);
+                viewers.remove(id);
             });
 
             final BufferedImage[] prev = new BufferedImage[]{null};
@@ -98,6 +103,10 @@ public class Server extends AbstractVerticle {
                 }
             });
         }).listen(8888);
+    }
+
+    public int countViewers() {
+        return viewers.size();
     }
 
     private void sendDiffs(BufferedImage img1, BufferedImage img2, OutputStream out) throws IOException {

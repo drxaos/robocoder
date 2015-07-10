@@ -22,9 +22,13 @@ public abstract class AbstractLevel extends TestbedTest {
 
     @Override
     public synchronized void step() {
-        game.beforeStep();
-        super.step();
-        game.afterStep();
+        if (!pause) {
+            game.beforeStep();
+        }
+        super.step(); // draw
+        if (!pause) {
+            game.afterStep();
+        }
     }
 
     @Override

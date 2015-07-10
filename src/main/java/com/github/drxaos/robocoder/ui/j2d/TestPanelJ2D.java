@@ -201,6 +201,8 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
         return bimage;
     }
 
+    static long c = 1000000000;
+
     public void paintScreen() {
         if (skip) {
             return;
@@ -210,6 +212,14 @@ public class TestPanelJ2D extends JPanel implements TestbedPanel {
             if ((g != null) && dbImage != null) {
                 g.drawImage(dbImage, 0, 0, null);
                 publishImage = toBufferedImage(dbImage);
+//                try {
+//                    if (c % 3 == 0) {
+//                        ImageIO.write(publishImage, "png", new File("gif/" + c + ".png"));
+//                    }
+//                    c++;
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
                 Toolkit.getDefaultToolkit().sync();
                 g.dispose();
             }
